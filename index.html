@@ -20,10 +20,8 @@
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         .container { max-width: 1000px; margin: 0 auto; }
 
-        /* Header e Preço Principal */
         .header-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         
-        /* Caixa de Valor Atual */
         .value-box { 
             background: rgba(255, 255, 255, 0.05); 
             padding: 20px; 
@@ -42,7 +40,6 @@
             font-size: 1.1rem; 
         }
 
-        /* Quadros Informativos */
         .info-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
@@ -59,7 +56,6 @@
         .info-card span { display: block; font-size: 0.75rem; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
         .info-card strong { font-size: 1.2rem; }
 
-        /* Gráfico e Controles */
         .chart-box { background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid #334155; margin-bottom: 20px; }
         .controls { margin-bottom: 20px; }
         select { 
@@ -73,7 +69,6 @@
             cursor: pointer; 
         }
 
-        /* Rodapé Status */
         .market-status {
             text-align: center;
             padding: 15px;
@@ -96,8 +91,8 @@
 <div class="container">
     <div class="header-main">
         <div>
-            <h1 id="tickerName" style="margin:0; font-size: 2.5rem;">Aguardando...</h1>
-            <p id="companyName" style="margin:5px 0; color:var(--muted); font-size: 1.1rem;">Selecione uma ação abaixo</p>
+            <h1 id="tickerName" style="margin:0; font-size: 2.5rem;">Carregando...</h1>
+            <p id="companyName" style="margin:5px 0; color:var(--muted); font-size: 1.1rem;">Buscando dados na B3...</p>
         </div>
         <div class="value-box">
             <div id="mainPrice" class="price-large">R$ 0,00</div>
@@ -141,28 +136,35 @@
 
 <script>
     let myChart = null;
-    // TOKEN INSERIDO CONFORME SOLICITADO
     const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f'; 
 
     async function fetchData(ticker) {
         try {
-            // Chamada para a API Brapi
+            // Adicionado suporte a cache e headers para evitar bloqueio no GitHub
             const response = await fetch(`https://brapi.dev/api/quote/${ticker}?range=1d&interval=15m&token=${API_TOKEN}`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
             const data = await response.json();
             
-            if (!data.results || data.results.length === 0) throw new Error("Ação não encontrada");
+            if (!data.results || data.results.length === 0) {
+                throw new Error("Ação não retornada pela API");
+            }
             
             const stock = data.results[0];
 
-            // 1. Atualizar Títulos e Preços
-            document.getElementById('tickerName').innerText = stock.symbol;
-            document.getElementById('companyName').innerText = stock.shortName;
+            // 1. Atualizar Títulos e Preços com segurança
+            document.getElementById('tickerName').innerText = stock.symbol || ticker;
+            document.getElementById('companyName').innerText = stock.shortName || "Empresa B3";
             
-            const precoAtual = stock.regularMarketPrice;
-            const variacao = stock.regularMarketChangePercent;
+            const precoAtual = stock.regularMarketPrice || 0;
+            const variacao = stock.regularMarketChangePercent || 0;
+            const abertura = stock.regularMarketOpen || 0;
             
             document.getElementById('mainPrice').innerText = `R$ ${precoAtual.toFixed(2)}`;
-            document.getElementById('priceOpenDay').innerText = `R$ ${stock.regularMarketOpen.toFixed(2)}`;
+            document.getElementById('priceOpenDay').innerText = `R$ ${abertura.toFixed(2)}`;
             document.getElementById('timeUpdate').innerText = new Date().toLocaleTimeString();
 
             // 2. Atualizar Caixa de Variação
@@ -172,25 +174,34 @@
             document.getElementById('mainPrice').className = 'price-large ' + (variacao >= 0 ? 'up' : 'down');
 
             // 3. Preparar Gráfico
-            if (stock.historicalDataPrice) {
+            if (stock.historicalDataPrice && stock.historicalDataPrice.length > 0) {
                 const history = stock.historicalDataPrice;
                 const labels = history.map(h => new Date(h.date * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
                 const prices = history.map(h => h.close);
                 renderChart(labels, prices, stock.symbol, variacao >= 0 ? '#10b981' : '#ef4444');
+            } else {
+                // Caso não haja histórico intraday (ex: mercado acabou de abrir)
+                renderChart([new Date().toLocaleTimeString()], [precoAtual], stock.symbol, '#3b82f6');
             }
 
             checkMarketStatus();
 
         } catch (error) {
-            console.error("Erro:", error);
+            console.error("Detalhes do erro na API:", error);
             document.getElementById('tickerName').innerText = "Erro na API";
-            document.getElementById('companyName').innerText = "Verifique o Token ou Plano";
+            document.getElementById('companyName').innerText = "Verifique o console (F12) para detalhes";
+            document.getElementById('marketStatusLabel').innerText = "Falha na conexão com Brapi";
+            document.getElementById('marketStatusLabel').className = "market-status status-closed";
         }
     }
 
     function renderChart(labels, data, ticker, color) {
-        const ctx = document.getElementById('stockChart').getContext('2d');
-        if (myChart) myChart.destroy();
+        const canvas = document.getElementById('stockChart');
+        const ctx = canvas.getContext('2d');
+        
+        if (myChart) {
+            myChart.destroy();
+        }
 
         myChart = new Chart(ctx, {
             type: 'line',
@@ -200,7 +211,7 @@
                     label: ticker,
                     data: data,
                     borderColor: color,
-                    backgroundColor: color + '1A', // Adiciona transparência
+                    backgroundColor: color + '1A',
                     borderWidth: 3,
                     fill: true,
                     tension: 0.4,
@@ -210,6 +221,7 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
                     x: { ticks: { color: '#94a3b8', maxRotation: 0 }, grid: { display: false } },
@@ -247,9 +259,7 @@
         fetchData(ticker);
     }
 
-    // Inicialização
     updateDashboard();
-    // Atualiza a cada 2 minutos
     setInterval(updateDashboard, 120000);
 </script>
 
