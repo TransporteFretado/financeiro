@@ -55,22 +55,22 @@
 
         .card:hover { transform: translateY(-3px); border-color: var(--accent); }
 
-        /* DESTAQUE DO TOKEN (Ticker) */
+        /* TOKEN EM DESTAQUE */
         .ticker-highlight { 
             font-size: 1.8rem; 
             font-weight: 800; 
             color: var(--accent); 
-            display: block;
-            line-height: 1.1;
+            display: block; /* Garante que ocupe a linha toda */
+            line-height: 1;
         }
         
-        /* NOME DA EMPRESA ABAIXO DO TOKEN */
+        /* NOME DA EMPRESA LOGO ABAIXO */
         .company-sub { 
             font-size: 0.85rem; 
             color: var(--text-muted); 
             font-weight: 400;
-            display: block;
-            margin-top: 2px;
+            display: block; /* Força a quebra de linha para ficar abaixo */
+            margin-top: 5px;
             margin-bottom: 15px;
             white-space: nowrap;
             overflow: hidden;
@@ -115,26 +115,18 @@
             border: 1px solid var(--border);
             z-index: 100;
         }
-
-        @media (max-width: 350px) {
-            .grid { grid-template-columns: 1fr; }
-            .price-main { font-size: 2.2rem; }
-        }
     </style>
 </head>
 <body>
 
 <div class="header">
     <h1>GTB Solution</h1>
-    <p id="timer">Dashboard Financeiro em Tempo Real</p>
+    <p>Painel de Monitoramento B3</p>
 </div>
 
-<div class="grid" id="stocksGrid">
-    </div>
+<div class="grid" id="stocksGrid"></div>
 
-<div class="footer-status" id="marketStatus">
-    CONECTANDO À B3...
-</div>
+<div class="footer-status" id="marketStatus">CONECTANDO...</div>
 
 <script>
     const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
@@ -148,15 +140,12 @@
             try {
                 const response = await fetch(`https://brapi.dev/api/quote/${ticker}?token=${API_TOKEN}`);
                 const data = await response.json();
-                
                 if (data.results && data.results[0]) {
                     updateOrCreateCard(data.results[0]);
                 }
-            } catch (e) {
-                console.error("Erro no ticker " + ticker, e);
-            }
+            } catch (e) { console.error(e); }
         }
-        document.getElementById('marketStatus').innerText = "ATUALIZADO ÀS " + new Date().toLocaleTimeString();
+        document.getElementById('marketStatus').innerText = "ÚLTIMA ATUALIZAÇÃO: " + new Date().toLocaleTimeString();
     }
 
     function updateOrCreateCard(stock) {
@@ -167,7 +156,7 @@
         const colorClass = isUp ? 'up' : 'down';
         const sign = isUp ? '+' : '';
 
-        // ESTRUTURA: TOKEN -> NOME -> PREÇO -> VARIAÇÃO -> DETALHES
+        // ESTRUTURA CORRIGIDA: TOKEN (EM CIMA) E NOME (EMBAIXO)
         const cardHTML = `
             <span class="ticker-highlight">${stock.symbol}</span>
             <span class="company-sub">${stock.shortName || stock.symbol}</span>
@@ -192,8 +181,7 @@
     }
 
     loadStocks();
-    setInterval(loadStocks, 60000); // Atualiza a cada 1 minuto
+    setInterval(loadStocks, 60000);
 </script>
-
 </body>
 </html>
