@@ -28,12 +28,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
         }
 
         .header { text-align: center; margin-bottom: 25px; width: 100%; }
-        .header h1 { font-size: clamp(1.5rem, 5vw, 2.2rem); font-weight: 800; margin: 0; color: var(--accent); }
-        .header p { color: var(--text-muted); margin-top: 5px; font-size: 0.9rem; }
+        .header h1 { font-size: 2rem; font-weight: 800; margin: 0; color: var(--accent); }
 
         .grid {
             display: grid;
@@ -50,31 +48,24 @@
             border-radius: 16px;
             padding: 20px;
             text-align: center;
-            transition: transform 0.2s, border-color 0.2s;
         }
 
-        .card:hover { transform: translateY(-3px); border-color: var(--accent); }
-
-        /* TOKEN EM DESTAQUE */
+        /* TOKEN EM DESTAQUE (LINHA 1) */
         .ticker-highlight { 
             font-size: 1.8rem; 
             font-weight: 800; 
             color: var(--accent); 
-            display: block; /* Garante que ocupe a linha toda */
-            line-height: 1;
+            display: block;
+            line-height: 1.2;
         }
         
-        /* NOME DA EMPRESA LOGO ABAIXO */
+        /* NOME DA EMPRESA (LINHA 2 - FONTE PEQUENA) */
         .company-sub { 
             font-size: 0.85rem; 
             color: var(--text-muted); 
             font-weight: 400;
-            display: block; /* Força a quebra de linha para ficar abaixo */
-            margin-top: 5px;
+            display: block;
             margin-bottom: 15px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .price-main {
@@ -82,7 +73,6 @@
             font-weight: 800;
             margin: 5px 0;
             display: block;
-            line-height: 1;
         }
 
         .variation-sub {
@@ -92,8 +82,6 @@
         }
 
         .details {
-            display: flex;
-            justify-content: center;
             border-top: 1px solid var(--border);
             padding-top: 15px;
             font-size: 0.85rem;
@@ -108,12 +96,9 @@
             bottom: 15px;
             padding: 10px 20px;
             background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
             border-radius: 30px;
             font-size: 0.75rem;
-            font-weight: bold;
             border: 1px solid var(--border);
-            z-index: 100;
         }
     </style>
 </head>
@@ -121,19 +106,32 @@
 
 <div class="header">
     <h1>GTB Solution</h1>
-    <p>Painel de Monitoramento B3</p>
 </div>
 
 <div class="grid" id="stocksGrid"></div>
 
-<div class="footer-status" id="marketStatus">CONECTANDO...</div>
+<div class="footer-status" id="marketStatus">ATUALIZANDO...</div>
 
 <script>
     const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
-    const tickers = [
-        "BBAS3", "BBDC4", "BBSE3", "BTHF11", "CXSE3", 
-        "EQTL3", "ITUB4", "KLBN11", "MXRF11", "TAEE11", "UNIP6", "WEGE3"
-    ];
+    
+    // DICIONÁRIO MANUAL PARA GARANTIR OS NOMES CORRETOS
+    const companyNames = {
+        "BBAS3": "Banco do Brasil",
+        "BBDC4": "Bradesco",
+        "BBSE3": "BB Seguridade",
+        "BTHF11": "BTG Logística",
+        "CXSE3": "Caixa Seguridade",
+        "EQTL3": "Equatorial Energia",
+        "ITUB4": "Itaú Unibanco",
+        "KLBN11": "Klabin",
+        "MXRF11": "Maxi Renda",
+        "TAEE11": "Taesa",
+        "UNIP6": "Unipar",
+        "WEGE3": "WEG S.A."
+    };
+
+    const tickers = Object.keys(companyNames);
 
     async function loadStocks() {
         for (const ticker of tickers) {
@@ -155,17 +153,19 @@
         const isUp = stock.regularMarketChangePercent >= 0;
         const colorClass = isUp ? 'up' : 'down';
         const sign = isUp ? '+' : '';
+        
+        // Buscamos o nome no nosso dicionário manual
+        const fullName = companyNames[stock.symbol] || stock.shortName;
 
-        // ESTRUTURA CORRIGIDA: TOKEN (EM CIMA) E NOME (EMBAIXO)
         const cardHTML = `
             <span class="ticker-highlight">${stock.symbol}</span>
-            <span class="company-sub">${stock.shortName || stock.symbol}</span>
+            <span class="company-sub">${fullName}</span>
             <span class="price-main ${colorClass}">R$ ${stock.regularMarketPrice.toFixed(2)}</span>
             <div class="variation-sub ${colorClass}">
                 ${sign}${stock.regularMarketChangePercent.toFixed(2)}% (R$ ${stock.regularMarketChange.toFixed(2)})
             </div>
             <div class="details">
-                Abertura: <strong style="color:white; margin-left:8px;">R$ ${stock.regularMarketOpen.toFixed(2)}</strong>
+                Abertura: <strong style="color:white;">R$ ${stock.regularMarketOpen.toFixed(2)}</strong>
             </div>
         `;
 
