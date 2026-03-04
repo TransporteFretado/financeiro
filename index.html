@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal Financeiro | GTB Solution B3</title>
+    <title>Terminal Financeiro | Alumar B3</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -56,7 +56,7 @@
         .info-card span { display: block; font-size: 0.75rem; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
         .info-card strong { font-size: 1.2rem; }
 
-        .chart-box { background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid #334155; margin-bottom: 20px; min-height: 300px; }
+        .chart-box { background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid #334155; margin-bottom: 20px; min-height: 350px; }
         .controls { margin-bottom: 20px; }
         select { 
             width: 100%; 
@@ -102,13 +102,24 @@
 
     <div class="controls">
         <select id="stockPicker" onchange="updateDashboard()">
-            <option value="BBAS3">BBAS3 - Banco do Brasil</option>
-            <option value="ITUB4">ITUB4 - Itaú Unibanco</option>
-            <option value="TAEE11">TAEE11 - Taesa</option>
-            <option value="WEGE3">WEGE3 - WEG</option>
-            <option value="UNIP6">UNIP6 - Unipar</option>
-            <option value="KLBN11">KLBN11 - Klabin</option>
-            <option value="MXRF11">MXRF11 - Maxi Renda</option>
+            <optgroup label="Bancos e Seguradoras">
+                <option value="BBAS3">BBAS3 - Banco do Brasil</option>
+                <option value="BBSE3">BBSE3 - BB Seguridade</option>
+                <option value="BBDC4">BBDC4 - Bradesco</option>
+                <option value="CXSE3">CXSE3 - Caixa Seguridade</option>
+                <option value="ITUB4">ITUB4 - Itaú Unibanco</option>
+            </optgroup>
+            <optgroup label="Energia e Indústria">
+                <option value="EQTL3">EQTL3 - Equatorial</option>
+                <option value="KLBN11">KLBN11 - Klabin</option>
+                <option value="TAEE11">TAEE11 - Taesa</option>
+                <option value="UNIP6">UNIP6 - Unipar</option>
+                <option value="WEGE3">WEGE3 - WEG</option>
+            </optgroup>
+            <optgroup label="Fundos Imobiliários">
+                <option value="BTHF11">BTHF11 - BTG Logística</option>
+                <option value="MXRF11">MXRF11 - Maxi Renda</option>
+            </optgroup>
         </select>
     </div>
 
@@ -140,42 +151,32 @@
 
     async function fetchData(ticker) {
         try {
-            // URL simplificada para evitar Erro 400
             const response = await fetch(`https://brapi.dev/api/quote/${ticker}?token=${API_TOKEN}`);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Status: ${response.status}`);
 
             const data = await response.json();
-            
-            if (!data.results || data.results.length === 0) {
-                throw new Error("Ação não encontrada");
-            }
+            if (!data.results || data.results.length === 0) throw new Error("Ativo não encontrado");
             
             const stock = data.results[0];
 
-            // 1. Atualizar Títulos e Preços
-            document.getElementById('tickerName').innerText = stock.symbol || ticker;
-            document.getElementById('companyName').innerText = stock.shortName || "Empresa B3";
+            document.getElementById('tickerName').innerText = stock.symbol;
+            document.getElementById('companyName').innerText = stock.shortName;
             
-            const precoAtual = stock.regularMarketPrice || 0;
+            const preco = stock.regularMarketPrice || 0;
             const variacao = stock.regularMarketChangePercent || 0;
             const abertura = stock.regularMarketOpen || 0;
             
-            document.getElementById('mainPrice').innerText = `R$ ${precoAtual.toFixed(2)}`;
+            document.getElementById('mainPrice').innerText = `R$ ${preco.toFixed(2)}`;
             document.getElementById('priceOpenDay').innerText = `R$ ${abertura.toFixed(2)}`;
             document.getElementById('timeUpdate').innerText = new Date().toLocaleTimeString();
 
-            // 2. Atualizar Badge de Variação
             const varBadge = document.getElementById('variation');
             varBadge.innerText = (variacao >= 0 ? '+' : '') + variacao.toFixed(2) + '%';
             varBadge.className = 'variation-badge ' + (variacao >= 0 ? 'bg-up' : 'bg-down');
             document.getElementById('mainPrice').className = 'price-large ' + (variacao >= 0 ? 'up' : 'down');
 
-            // 3. Preparar Gráfico (fallback caso não venha histórico)
             let labels = [new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})];
-            let prices = [precoAtual];
+            let prices = [preco];
 
             if (stock.historicalDataPrice && stock.historicalDataPrice.length > 0) {
                 labels = stock.historicalDataPrice.map(h => new Date(h.date * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
@@ -186,18 +187,15 @@
             checkMarketStatus();
 
         } catch (error) {
-            console.error("Erro na API:", error);
+            console.error("Erro na busca:", error);
             document.getElementById('tickerName').innerText = "Erro na API";
-            document.getElementById('companyName').innerText = "Verifique o Token ou Limite de Uso";
+            document.getElementById('companyName').innerText = "Verifique o console ou o token.";
         }
     }
 
     function renderChart(labels, data, ticker, color) {
         const ctx = document.getElementById('stockChart').getContext('2d');
-        
-        if (myChart) {
-            myChart.destroy();
-        }
+        if (myChart) myChart.destroy();
 
         myChart = new Chart(ctx, {
             type: 'line',
@@ -210,9 +208,9 @@
                     backgroundColor: color + '1A',
                     borderWidth: 3,
                     fill: true,
-                    tension: 0.4,
-                    pointRadius: 2,
-                    pointHoverRadius: 5
+                    tension: 0.3,
+                    pointRadius: 1,
+                    pointHoverRadius: 6
                 }]
             },
             options: {
@@ -232,20 +230,19 @@
         const day = now.getDay(); 
         const hour = now.getHours();
         const min = now.getMinutes();
-        const currentTime = hour * 60 + min;
+        const totalMin = hour * 60 + min;
 
-        const openTime = 10 * 60; // 10:00
-        const closeTime = 17 * 60 + 55; // 17:55
+        const open = 10 * 60; 
+        const close = 17 * 60 + 55; 
         
         const label = document.getElementById('marketStatusLabel');
         const isWeekend = (day === 0 || day === 6);
 
-        if (!isWeekend && currentTime >= openTime && currentTime <= closeTime) {
+        if (!isWeekend && totalMin >= open && totalMin <= close) {
             label.innerText = "● Mercado Aberto";
             label.className = "market-status status-open";
         } else {
-            const closingInfo = isWeekend ? "Fim de Semana" : "Fechado às 17:55";
-            label.innerText = `● Mercado Fechado (${closingInfo})`;
+            label.innerText = `● Mercado Fechado (${isWeekend ? "Fim de Semana" : "Fechamento às 17:55"})`;
             label.className = "market-status status-closed";
         }
     }
@@ -255,9 +252,7 @@
         fetchData(ticker);
     }
 
-    // Inicialização
     updateDashboard();
-    // Atualiza a cada 2 minutos
     setInterval(updateDashboard, 120000);
 </script>
 
