@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitor B3 | Status em Tempo Real - Ações de Brener Gomes</title>
+    <title>Terminal Financeiro B3 | GTB Solution </title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -20,10 +20,32 @@
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         .container { max-width: 1000px; margin: 0 auto; }
 
-        /* Painel de Informações de Abertura */
+        /* Header e Preço Principal */
+        .header-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        
+        /* Caixa de Valor Atual */
+        .value-box { 
+            background: rgba(255, 255, 255, 0.05); 
+            padding: 20px; 
+            border-radius: 16px; 
+            border: 1px solid #334155;
+            text-align: right;
+            min-width: 200px;
+        }
+        .price-large { font-size: 2.8rem; font-weight: 800; line-height: 1; }
+        .variation-badge { 
+            display: inline-block; 
+            margin-top: 8px; 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            font-size: 1.1rem; 
+        }
+
+        /* Quadros Informativos */
         .info-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
             gap: 15px; 
             margin-bottom: 20px; 
         }
@@ -35,30 +57,38 @@
             text-align: center;
         }
         .info-card span { display: block; font-size: 0.75rem; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
-        .info-card strong { font-size: 1.2rem; color: var(--text); }
+        .info-card strong { font-size: 1.2rem; }
 
-        .header-main { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
-        .price-large { font-size: 2.5rem; font-weight: 800; color: var(--success); }
+        /* Gráfico e Controles */
+        .chart-box { background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid #334155; margin-bottom: 20px; }
+        .controls { margin-bottom: 20px; }
+        select { 
+            width: 100%; 
+            background: #1e293b; 
+            color: white; 
+            border: 2px solid #3b82f6; 
+            padding: 12px; 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            cursor: pointer; 
+        }
 
-        /* Gráfico */
-        .chart-box { background: var(--card); padding: 20px; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); margin-bottom: 20px; }
-
-        /* Controles */
-        .controls { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; background: #1e293b; padding: 10px; border-radius: 8px; }
-        select { background: #0f172a; color: white; border: 1px solid #3b82f6; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; }
-
-        /* Rodapé de Status do Mercado */
+        /* Rodapé Status */
         .market-status {
             text-align: center;
-            padding: 12px;
+            padding: 15px;
             border-radius: 8px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
             margin-top: 20px;
         }
         .status-open { background: var(--success); color: #064e3b; }
         .status-closed { background: #000000; color: #ffffff; border: 1px solid #334155; }
+        
+        .up { color: var(--success); }
+        .down { color: var(--danger); }
+        .bg-up { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .bg-down { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
     </style>
 </head>
 <body>
@@ -66,10 +96,25 @@
 <div class="container">
     <div class="header-main">
         <div>
-            <h1 id="tickerName" style="margin:0">Carregando...</h1>
-            <p id="companyName" style="margin:5px 0; color:var(--muted)">Aguardando seleção</p>
+            <h1 id="tickerName" style="margin:0; font-size: 2.5rem;">Aguardando...</h1>
+            <p id="companyName" style="margin:5px 0; color:var(--muted); font-size: 1.1rem;">Selecione uma ação abaixo</p>
         </div>
-        <div class="price-large" id="mainPrice">R$ 0,00</div>
+        <div class="value-box">
+            <div id="mainPrice" class="price-large">R$ 0,00</div>
+            <div id="variation" class="variation-badge">0.00%</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <select id="stockPicker" onchange="updateDashboard()">
+            <option value="BBAS3">BBAS3 - Banco do Brasil</option>
+            <option value="ITUB4">ITUB4 - Itaú Unibanco</option>
+            <option value="TAEE11">TAEE11 - Taesa</option>
+            <option value="WEGE3">WEGE3 - WEG</option>
+            <option value="UNIP6">UNIP6 - Unipar</option>
+            <option value="KLBN11">KLBN11 - Klabin</option>
+            <option value="MXRF11">MXRF11 - Maxi Renda</option>
+        </select>
     </div>
 
     <div class="info-grid">
@@ -79,7 +124,7 @@
         </div>
         <div class="info-card">
             <span>Abertura do Mercado</span>
-            <strong id="marketOpenTime">10:00</strong>
+            <strong>10:00</strong>
         </div>
         <div class="info-card">
             <span>Preço de Abertura</span>
@@ -87,59 +132,63 @@
         </div>
     </div>
 
-    <div class="controls">
-        <span>Selecione o Ativo:</span>
-        <select id="stockPicker" onchange="updateDashboard()">
-            <option value="BBAS3">BBAS3 (Banco do Brasil)</option>
-            <option value="ITUB4">ITUB4 (Itaú Unibanco)</option>
-            <option value="TAEE11">TAEE11 (Taesa)</option>
-            <option value="WEGE3">WEGE3 (WEG)</option>
-            <option value="UNIP6">UNIP6 (Unipar)</option>
-            <option value="KLBN11">KLBN11 (Klabin)</option>
-            <option value="MXRF11">MXRF11 (Maxi Renda)</option>
-            <option value="PETR4">PETR4 (Petrobras)</option>
-        </select>
-    </div>
-
     <div class="chart-box">
-        <canvas id="stockChart" height="120"></canvas>
+        <canvas id="stockChart" height="100"></canvas>
     </div>
 
-    <div id="marketStatusLabel" class="market-status">Verificando mercado...</div>
+    <div id="marketStatusLabel" class="market-status">Verificando...</div>
 </div>
 
 <script>
     let myChart = null;
-    const API_TOKEN = 'SEU_TOKEN_AQUI'; // <--- INSIRA SEU TOKEN DA BRAPI AQUI
+    // TOKEN INSERIDO CONFORME SOLICITADO
+    const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f'; 
 
     async function fetchData(ticker) {
         try {
+            // Chamada para a API Brapi
             const response = await fetch(`https://brapi.dev/api/quote/${ticker}?range=1d&interval=15m&token=${API_TOKEN}`);
             const data = await response.json();
+            
+            if (!data.results || data.results.length === 0) throw new Error("Ação não encontrada");
+            
             const stock = data.results[0];
 
             // 1. Atualizar Títulos e Preços
             document.getElementById('tickerName').innerText = stock.symbol;
             document.getElementById('companyName').innerText = stock.shortName;
-            document.getElementById('mainPrice').innerText = `R$ ${stock.regularMarketPrice.toFixed(2)}`;
+            
+            const precoAtual = stock.regularMarketPrice;
+            const variacao = stock.regularMarketChangePercent;
+            
+            document.getElementById('mainPrice').innerText = `R$ ${precoAtual.toFixed(2)}`;
             document.getElementById('priceOpenDay').innerText = `R$ ${stock.regularMarketOpen.toFixed(2)}`;
             document.getElementById('timeUpdate').innerText = new Date().toLocaleTimeString();
 
-            // 2. Preparar Gráfico
-            const history = stock.historicalDataPrice;
-            const labels = history.map(h => new Date(h.date * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
-            const prices = history.map(h => h.close);
+            // 2. Atualizar Caixa de Variação
+            const varBadge = document.getElementById('variation');
+            varBadge.innerText = (variacao >= 0 ? '+' : '') + variacao.toFixed(2) + '%';
+            varBadge.className = 'variation-badge ' + (variacao >= 0 ? 'bg-up' : 'bg-down');
+            document.getElementById('mainPrice').className = 'price-large ' + (variacao >= 0 ? 'up' : 'down');
 
-            renderChart(labels, prices, stock.symbol);
+            // 3. Preparar Gráfico
+            if (stock.historicalDataPrice) {
+                const history = stock.historicalDataPrice;
+                const labels = history.map(h => new Date(h.date * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
+                const prices = history.map(h => h.close);
+                renderChart(labels, prices, stock.symbol, variacao >= 0 ? '#10b981' : '#ef4444');
+            }
+
             checkMarketStatus();
 
         } catch (error) {
-            console.error("Erro ao carregar dados:", error);
+            console.error("Erro:", error);
             document.getElementById('tickerName').innerText = "Erro na API";
+            document.getElementById('companyName').innerText = "Verifique o Token ou Plano";
         }
     }
 
-    function renderChart(labels, data, ticker) {
+    function renderChart(labels, data, ticker, color) {
         const ctx = document.getElementById('stockChart').getContext('2d');
         if (myChart) myChart.destroy();
 
@@ -150,19 +199,20 @@
                 datasets: [{
                     label: ticker,
                     data: data,
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    borderWidth: 2,
+                    borderColor: color,
+                    backgroundColor: color + '1A', // Adiciona transparência
+                    borderWidth: 3,
                     fill: true,
                     tension: 0.4,
-                    pointRadius: 2
+                    pointRadius: 0,
+                    pointHoverRadius: 5
                 }]
             },
             options: {
                 responsive: true,
                 plugins: { legend: { display: false } },
                 scales: {
-                    x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+                    x: { ticks: { color: '#94a3b8', maxRotation: 0 }, grid: { display: false } },
                     y: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } }
                 }
             }
@@ -171,7 +221,7 @@
 
     function checkMarketStatus() {
         const now = new Date();
-        const day = now.getDay(); // 0 = Domingo, 6 = Sábado
+        const day = now.getDay(); 
         const hour = now.getHours();
         const min = now.getMinutes();
         const currentTime = hour * 60 + min;
@@ -186,7 +236,8 @@
             label.innerText = "● Mercado Aberto";
             label.className = "market-status status-open";
         } else {
-            label.innerText = "● Mercado Fechado (Fechamento às 17:55)";
+            const closingInfo = isWeekend ? "Fim de Semana" : "Fechado às 17:55";
+            label.innerText = `● Mercado Fechado (${closingInfo})`;
             label.className = "market-status status-closed";
         }
     }
@@ -198,10 +249,9 @@
 
     // Inicialização
     updateDashboard();
-    // Atualiza a cada 5 minutos automaticamente
-    setInterval(updateDashboard, 300000);
+    // Atualiza a cada 2 minutos
+    setInterval(updateDashboard, 120000);
 </script>
 
 </body>
 </html>
-
