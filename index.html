@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal Financeiro | Alumar B3</title>
+    <title>Terminal Financeiro | Consulta Ações B3</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -57,8 +57,11 @@
         .info-card strong { font-size: 1.2rem; }
 
         .chart-box { background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid #334155; margin-bottom: 20px; min-height: 350px; }
-        .controls { margin-bottom: 20px; }
-        select { 
+        
+        /* Estilização do Campo de Pesquisa */
+        .search-box { margin-bottom: 20px; position: relative; }
+        .search-box label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--muted); }
+        input#stockSearch { 
             width: 100%; 
             background: #1e293b; 
             color: white; 
@@ -66,8 +69,11 @@
             padding: 12px; 
             border-radius: 8px; 
             font-size: 1rem; 
-            cursor: pointer; 
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
         }
+        input#stockSearch:focus { border-color: var(--success); }
 
         .market-status {
             text-align: center;
@@ -100,27 +106,23 @@
         </div>
     </div>
 
-    <div class="controls">
-        <select id="stockPicker" onchange="updateDashboard()">
-            <optgroup label="Bancos e Seguradoras">
-                <option value="BBAS3">BBAS3 - Banco do Brasil</option>
-                <option value="BBSE3">BBSE3 - BB Seguridade</option>
-                <option value="BBDC4">BBDC4 - Bradesco</option>
-                <option value="CXSE3">CXSE3 - Caixa Seguridade</option>
-                <option value="ITUB4">ITUB4 - Itaú Unibanco</option>
-            </optgroup>
-            <optgroup label="Energia e Indústria">
-                <option value="EQTL3">EQTL3 - Equatorial</option>
-                <option value="KLBN11">KLBN11 - Klabin</option>
-                <option value="TAEE11">TAEE11 - Taesa</option>
-                <option value="UNIP6">UNIP6 - Unipar</option>
-                <option value="WEGE3">WEGE3 - WEG</option>
-            </optgroup>
-            <optgroup label="Fundos Imobiliários">
-                <option value="BTHF11">BTHF11 - BTG Logística</option>
-                <option value="MXRF11">MXRF11 - Maxi Renda</option>
-            </optgroup>
-        </select>
+    <div class="search-box">
+        <label for="stockSearch">Pesquisar ou Selecionar Ativo:</label>
+        <input list="stockOptions" id="stockSearch" placeholder="Ex: BBAS3 ou Banco do Brasil..." oninput="handleSearch(this.value)">
+        <datalist id="stockOptions">
+            <option value="BBAS3">Banco do Brasil</option>
+            <option value="BBSE3">BB Seguridade</option>
+            <option value="BBDC4">Bradesco</option>
+            <option value="CXSE3">Caixa Seguridade</option>
+            <option value="ITUB4">Itaú Unibanco</option>
+            <option value="EQTL3">Equatorial</option>
+            <option value="KLBN11">Klabin</option>
+            <option value="TAEE11">Taesa</option>
+            <option value="UNIP6">Unipar</option>
+            <option value="WEGE3">WEG</option>
+            <option value="BTHF11">BTG Logística</option>
+            <option value="MXRF11">Maxi Renda</option>
+        </datalist>
     </div>
 
     <div class="info-grid">
@@ -148,10 +150,24 @@
 <script>
     let myChart = null;
     const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f'; 
+    let currentTicker = "BBAS3"; // Valor inicial
+
+    // Função que detecta quando o usuário seleciona ou digita um ticker válido
+    function handleSearch(val) {
+        const options = document.getElementById('stockOptions').options;
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value === val.toUpperCase()) {
+                currentTicker = val.toUpperCase();
+                fetchData(currentTicker);
+                break;
+            }
+        }
+    }
 
     async function fetchData(ticker) {
         try {
             const response = await fetch(`https://brapi.dev/api/quote/${ticker}?token=${API_TOKEN}`);
+            
             if (!response.ok) throw new Error(`Status: ${response.status}`);
 
             const data = await response.json();
@@ -189,7 +205,7 @@
         } catch (error) {
             console.error("Erro na busca:", error);
             document.getElementById('tickerName').innerText = "Erro na API";
-            document.getElementById('companyName').innerText = "Verifique o console ou o token.";
+            document.getElementById('companyName').innerText = "Ativo não encontrado ou erro de conexão.";
         }
     }
 
@@ -247,13 +263,9 @@
         }
     }
 
-    function updateDashboard() {
-        const ticker = document.getElementById('stockPicker').value;
-        fetchData(ticker);
-    }
-
-    updateDashboard();
-    setInterval(updateDashboard, 120000);
+    // Inicialização
+    fetchData(currentTicker);
+    setInterval(() => fetchData(currentTicker), 120000); 
 </script>
 
 </body>
