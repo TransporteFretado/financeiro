@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard de Oscilação | B3</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .chart-container { background: #1e293b; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .price-badge { font-size: 1.5rem; font-weight: bold; color: #10b981; }
+        select { padding: 10px; border-radius: 6px; background: #334155; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div>
+            <h2 id="tickerTitle">PETR4 - Petrobras</h2>
+            <p id="lastUpdate">Atualizando...</p>
+        </div>
+        <div class="price-badge" id="currentPrice">R$ 0,00</div>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <label>Escolha a Ação:</label>
+        <select id="stockSelector" onchange="mudarAcao()">
+            <option value="PETR4">PETR4</option>
+            <option value="VALE3">VALE3</option>
+            <option value="ITUB4">ITUB4</option>
+            <option value="MGLU3">MGLU3</option>
+        </select>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="meuGrafico"></canvas>
+    </div>
+</div>
+
+<script>
+    let chart; // Variável global para o gráfico
+    const API_TOKEN = 'SEU_TOKEN_AQUI'; // Pegue seu token em brapi.dev
+
+    async function buscarDados(ticker) {
+        try {
+            // Buscamos o histórico do último dia com intervalo de 15 minutos
+            const response = await fetch(`https://brapi.dev/api/quote/${ticker}?range=1d&interval=15m&token=${API_TOKEN}`);
+            const data = await response.json();
+            const result = data.results[0];
+
+            // Preparar dados para o gráfico
+            const historico = result.historicalDataPrice;
+            const labels = historico.map(h => {
+                const date = new Date(h.date * 1000);
+                return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            });
+            const precos = historico.map(h => h.close);
+
+            // Atualizar UI
+            document.getElementById('currentPrice').innerText = `R$ ${result.regularMarketPrice.toFixed(2)}`;
+            document.getElementById('tickerTitle').innerText = `${result.symbol} - ${result.shortName}`;
+            document.getElementById('lastUpdate').innerText = `Última atualização: ${new Date().toLocaleTimeString()}`;
+
+            renderizarGrafico(labels, precos, ticker);
+        } catch (error) {
+            console.error("Erro ao buscar dados:", error);
+        }
+    }
+
+    function renderizarGrafico(labels, dados, ticker) {
+        const ctx = document.getElementById('meuGrafico').getContext('2d');
+        
+        // Se já existe um gráfico, destrói para criar o novo
+        if (chart) chart.destroy();
+
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: `Preço de ${ticker} (Hoje)`,
+                    data: dados,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3, // Deixa a linha curvada (suave)
+                    pointRadius: 0 // Remove os pontos para ficar uma linha limpa
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } },
+                    y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+    }
+
+    function mudarAcao() {
+        const ticker = document.getElementById('stockSelector').value;
+        buscarDados(ticker);
+    }
+
+    // Iniciar
+    buscarDados('PETR4');
+</script>
+
+</body>
+</html>
