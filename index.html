@@ -31,7 +31,7 @@
         }
 
         .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { font-size: 1.5rem; color: var(--b3-bright); letter-spacing: 1px; }
+        .header h1 { font-size: 1.5rem; color: var(--b3-bright); letter-spacing: 1px; text-transform: uppercase; }
         .header p { font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; }
 
         .btn-container { display: flex; gap: 10px; margin-bottom: 25px; }
@@ -64,44 +64,44 @@
         
         .collapsed .grid { display: none; }
 
-        /* --- CARD CORRIGIDO --- */
         .card { 
             background: var(--card-bg); 
-            padding: 20px 10px; 
+            padding: 25px 15px; 
             display: flex; 
             flex-direction: column; 
             align-items: center;
             justify-content: space-between;
-            min-height: 180px;
+            min-height: 200px;
         }
 
-        .ticker { font-size: 1.1rem; font-weight: 800; color: var(--b3-bright); }
-        .name { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; text-align: center; }
+        .ticker { font-size: 1.1rem; font-weight: 800; color: var(--b3-bright); margin-bottom: 2px; }
+        .name { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; text-align: center; height: 1.2rem; overflow: hidden; }
         
-        .price { font-size: 1.6rem; font-weight: 700; margin: 5px 0; }
+        .price { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
         
-        .variation { font-size: 0.8rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; }
-        .up { color: var(--success); }
-        .down { color: var(--danger); }
+        .variation { font-size: 0.85rem; font-weight: 700; padding: 2px 0; border-radius: 4px; }
+        .up { color: var(--success); text-shadow: 0 0 8px rgba(0, 255, 136, 0.2); }
+        .down { color: var(--danger); text-shadow: 0 0 8px rgba(255, 51, 85, 0.2); }
 
         .info-footer { 
             margin-top: 15px; 
-            padding-top: 10px; 
+            padding-top: 12px; 
             border-top: 1px solid rgba(255,255,255,0.05); 
             width: 100%; 
             text-align: center; 
         }
-        .info-label { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; display: block; }
-        .info-value { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+        .info-label { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 2px; }
+        .info-value { font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
 
         .footer-status {
             position: fixed; bottom: 20px; padding: 10px 20px;
             background: #000; border-radius: 50px; border: 1px solid var(--b3-blue);
-            font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; gap: 8px;
+            font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
         .dot { width: 8px; height: 8px; border-radius: 50%; }
-        .dot-green { background: var(--success); box-shadow: 0 0 8px var(--success); }
-        .dot-red { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+        .dot-green { background: var(--success); box-shadow: 0 0 10px var(--success); }
+        .dot-red { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
 
         @media (max-width: 480px) { .grid { grid-template-columns: 1fr 1fr; } }
     </style>
@@ -114,11 +114,11 @@
 </div>
 
 <div class="btn-container">
-    <button class="btn" onclick="toggleAll(false)">Expandir</button>
-    <button class="btn" onclick="toggleAll(true)">Recolher</button>
+    <button class="btn" onclick="toggleAll(false)">Expandir Todos</button>
+    <button class="btn" onclick="toggleAll(true)">Recolher Todos</button>
 </div>
 
-<div id="dashboard-content" style="width: 100%; max-width: 900px; padding-bottom: 80px;"></div>
+<div id="dashboard-content" style="width: 100%; max-width: 900px; padding-bottom: 100px;"></div>
 
 <div class="footer-status" id="marketStatus"></div>
 
@@ -171,7 +171,9 @@
         const colorClass = isUp ? 'up' : 'down';
         const sign = isUp ? '+' : '';
         const open = stock.regularMarketOpen || stock.regularMarketPreviousClose || 0;
+        const changeAbs = Math.abs(stock.regularMarketChange).toFixed(2);
 
+        // Formatação solicitada: -3% | R$ 2,50
         const html = `
             <div style="display:flex; flex-direction:column; align-items:center;">
                 <span class="ticker">${stock.symbol}</span>
@@ -179,7 +181,7 @@
             </div>
             <div style="display:flex; flex-direction:column; align-items:center;">
                 <span class="price">R$ ${stock.regularMarketPrice.toFixed(2)}</span>
-                <span class="variation ${colorClass}">${sign}${stock.regularMarketChangePercent.toFixed(2)}%</span>
+                <span class="variation ${colorClass}">${sign}${stock.regularMarketChangePercent.toFixed(2)}% | R$ ${changeAbs}</span>
             </div>
             <div class="info-footer">
                 <span class="info-label">Abertura</span>
