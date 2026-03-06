@@ -4,28 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitor B3 | GTB Solution</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Paleta Neutra Executiva */
-            --bg: #0f121a;
-            --card-bg: #1a1e29;
-            --text-main: #e2e8f0;
-            --text-muted: #64748b;
-            /* Cores de sinalização neutras (menos saturadas) */
-            --success: #82bda6; 
-            --danger: #c58d8d;
-            --border: #2d3548;
-            --accent: #94a3b8; /* Cinza azulado neutro para títulos */
+            /* Paleta B3 - Cores Vivas */
+            --bg: #05070a;
+            --card-bg: #0f1420;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --b3-blue: #003399; /* Azul Royal B3 */
+            --b3-accent: #0055ff; /* Azul vibrante para Tickers */
+            --success: #00ff88; /* Verde Neon Saturado */
+            --danger: #ff3355; /* Vermelho Vivo Saturado */
+            --border: #1e293b;
         }
 
         .light-theme {
-            --bg: #f1f5f9;
+            --bg: #f0f4f8;
             --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #94a3b8;
-            --border: #e2e8f0;
-            --accent: #475569;
+            --text-main: #001e62;
+            --text-muted: #64748b;
+            --border: #cbd5e1;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -39,61 +38,63 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: all 0.5s ease;
         }
 
         /* --- CABEÇALHO --- */
-        .header { text-align: center; margin-bottom: 30px; width: 100%; }
-        .header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: 0.05em; margin: 0; color: var(--text-main); text-transform: uppercase; }
-        .header p { font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; font-weight: 300; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.6rem; font-weight: 800; color: var(--b3-accent); text-transform: uppercase; margin: 0; }
+        .header p { font-size: 0.85rem; color: var(--text-muted); margin-top: 5px; }
 
-        .global-controls { display: flex; gap: 12px; margin-bottom: 25px; }
+        .global-controls { display: flex; gap: 10px; margin-bottom: 25px; }
         .btn-toggle {
-            background: transparent; color: var(--text-muted); border: 1px solid var(--border);
-            padding: 8px 18px; border-radius: 4px; font-size: 0.6rem; font-weight: 600; cursor: pointer;
-            transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em;
+            background: var(--b3-blue); color: white; border: none;
+            padding: 10px 20px; border-radius: 5px; font-size: 0.7rem; font-weight: 700; cursor: pointer;
+            text-transform: uppercase; transition: transform 0.2s;
         }
-        .btn-toggle:hover { border-color: var(--text-muted); color: var(--text-main); }
+        .btn-toggle:active { transform: scale(0.95); }
 
         /* --- SEÇÕES --- */
         .sector-section {
             width: 100%; max-width: 900px; margin-bottom: 15px;
-            border-radius: 4px; overflow: hidden; background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 8px; overflow: hidden; background: var(--card-bg); border: 1px solid var(--border);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
 
         .sector-header {
-            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; background: rgba(255, 255, 255, 0.01);
+            padding: 18px 24px; display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; border-bottom: 1px solid var(--border);
         }
 
-        .sector-title { font-size: 0.7rem; font-weight: 700; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1px; background: var(--border); border-top: 1px solid var(--border); }
+        .sector-title { font-size: 0.75rem; font-weight: 800; color: var(--b3-accent); letter-spacing: 0.1em; text-transform: uppercase; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1px; background: var(--border); }
         .collapsed .grid { display: none; }
 
-        /* --- CARDS NEUTROS --- */
-        .card { background: var(--card-bg); padding: 25px 15px; text-align: center; display: flex; flex-direction: column; align-items: center; }
-        .ticker-name { font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; letter-spacing: 0.02em; }
-        .company-name { font-size: 0.55rem; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; }
-        .price-main { font-size: 1.6rem; font-weight: 400; margin-bottom: 6px; color: var(--text-main); }
+        /* --- CARDS VIVOS --- */
+        .card { background: var(--card-bg); padding: 30px 15px; text-align: center; }
+        .ticker-name { font-size: 1.1rem; font-weight: 800; color: var(--b3-accent); display: block; margin-bottom: 2px; }
+        .company-name { font-size: 0.6rem; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; font-weight: 600; }
+        .price-main { font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
         
-        .variation-box { font-size: 0.7rem; font-weight: 600; margin-bottom: 22px; padding: 2px 8px; border-radius: 2px; }
-        
-        /* Abertura Central Inferior */
-        .opening-label { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-        .opening-price { font-size: 0.8rem; font-weight: 400; color: var(--text-muted); }
+        /* Variação com cores saturadas */
+        .variation-box { font-size: 0.85rem; font-weight: 800; margin-bottom: 25px; }
+        .up { color: var(--success); text-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
+        .down { color: var(--danger); text-shadow: 0 0 10px rgba(255, 51, 85, 0.3); }
 
-        .up { color: var(--success); }
-        .down { color: var(--danger); }
+        /* Abertura */
+        .opening-container { border-top: 1px solid var(--border); padding-top: 15px; }
+        .opening-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; display: block; }
+        .opening-price { font-size: 1rem; font-weight: 700; color: var(--text-main); }
 
         /* --- STATUS RODAPÉ --- */
         .footer-status {
-            position: fixed; bottom: 20px; padding: 10px 20px; background: var(--card-bg);
-            border-radius: 4px; font-size: 0.65rem; font-weight: 400; border: 1px solid var(--border);
-            display: flex; align-items: center; gap: 10px; color: var(--text-muted);
+            position: fixed; bottom: 20px; padding: 12px 25px; background: #000;
+            border-radius: 50px; font-size: 0.7rem; font-weight: 700; border: 1px solid var(--b3-blue);
+            display: flex; align-items: center; gap: 12px; box-shadow: 0 0 20px rgba(0, 85, 255, 0.2);
         }
-        .status-dot { width: 6px; height: 6px; border-radius: 50%; }
-        .dot-green { background: var(--success); }
-        .dot-red { background: var(--danger); }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-green { background: var(--success); box-shadow: 0 0 10px var(--success); }
+        .dot-red { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
         
         @media (max-width: 480px) { .grid { grid-template-columns: 1fr 1fr; } }
     </style>
@@ -106,11 +107,11 @@
 </div>
 
 <div class="global-controls">
-    <button class="btn-toggle" onclick="toggleAll(false)">Expandir</button>
-    <button class="btn-toggle" onclick="toggleAll(true)">Recolher</button>
+    <button class="btn-toggle" onclick="toggleAll(false)">Expandir Tudo</button>
+    <button class="btn-toggle" onclick="toggleAll(true)">Recolher Tudo</button>
 </div>
 
-<div id="dashboard-content" style="width: 100%; max-width: 900px; padding-bottom: 80px;"></div>
+<div id="dashboard-content" style="width: 100%; max-width: 900px; padding-bottom: 100px;"></div>
 
 <div class="footer-status" id="marketStatus"></div>
 
@@ -124,11 +125,6 @@
         "Fundos Imobiliários": { "BTHF11": "BTG Logística", "MXRF11": "Maxi Renda" }
     };
 
-    function applyAutoTheme() {
-        const hour = new Date().getHours();
-        if (hour >= 6 && hour < 18) document.body.classList.add('light-theme');
-    }
-
     function createStructure() {
         const content = document.getElementById('dashboard-content');
         content.innerHTML = '';
@@ -140,7 +136,7 @@
             section.innerHTML = `
                 <div class="sector-header" onclick="toggleSector('${sectionId}')">
                     <span class="sector-title">${sectorName}</span>
-                    <span style="font-size: 0.5rem; color: var(--text-muted);">▼</span>
+                    <span style="color:var(--b3-accent)">▼</span>
                 </div>
                 <div class="grid" id="grid-${sectionId}"></div>
             `;
@@ -170,6 +166,7 @@
         const isUp = stock.regularMarketChangePercent >= 0;
         const colorClass = isUp ? 'up' : 'down';
         const sign = isUp ? '+' : '';
+        const openingPrice = stock.regularMarketOpen || stock.regularMarketPreviousClose || 0;
 
         const cardHTML = `
             <span class="ticker-name">${stock.symbol}</span>
@@ -178,8 +175,10 @@
             <div class="variation-box ${colorClass}">
                 ${sign}${stock.regularMarketChangePercent.toFixed(2)}% | R$ ${Math.abs(stock.regularMarketChange).toFixed(2)}
             </div>
-            <span class="opening-label">Abertura</span>
-            <span class="opening-price">R$ ${stock.regularMarketOpen.toFixed(2)}</span>
+            <div class="opening-container">
+                <span class="opening-label">Abertura</span>
+                <span class="opening-price">R$ ${openingPrice.toFixed(2)}</span>
+            </div>
         `;
 
         if (card) {
@@ -199,7 +198,7 @@
         const statusEl = document.getElementById('marketStatus');
         statusEl.innerHTML = `
             <div class="status-dot ${isOpen?'dot-green':'dot-red'}"></div>
-            <span style="text-transform: uppercase; letter-spacing: 0.1em;">Mercado ${isOpen?'Aberto':'Fechado'}</span>
+            <span style="text-transform: uppercase;">MERCADO ${isOpen?'ABERTO':'FECHADO'} | ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
         `;
     }
 
@@ -210,7 +209,6 @@
         });
     }
 
-    applyAutoTheme();
     createStructure();
     loadStocks();
     setInterval(loadStocks, 60000);
