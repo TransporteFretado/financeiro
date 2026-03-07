@@ -11,53 +11,59 @@
             --text-muted: #707a8a; --border: #2b3139; --success: #00f2a1; --danger: #ff4d6d; --warning: #ffb800;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text-main); padding-bottom: 70px; }
+        body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text-main); padding-bottom: 80px; }
         
-        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 15px 10px; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 15px; }
         .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { font-size: 1.4rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+        .header h1 { font-size: 1.5rem; font-weight: 800; text-transform: uppercase; color: #fff; }
         
-        .btn-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
-        .btn { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border); padding: 12px; border-radius: 8px; font-size: 0.65rem; font-weight: 800; cursor: pointer; flex: 1; max-width: 150px; }
+        .btn-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .btn { flex: 1; max-width: 180px; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border); padding: 14px; border-radius: 10px; font-size: 0.7rem; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn:active { background: var(--border); }
 
-        .sector-section { margin-bottom: 12px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .sector-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(255,255,255,0.02); }
-        .sector-title { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+        .sector-section { margin-bottom: 12px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+        .sector-header { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(255,255,255,0.02); }
+        .sector-title { font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; padding: 10px; background: var(--bg); display: none; }
+        /* Grid Inteligente */
+        .grid { display: none; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; padding: 15px; background: var(--bg); }
         .expanded .grid { display: grid; }
 
-        .card { background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid var(--border); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 160px; }
-        .card.opportunity { border: 1.5px solid var(--success); box-shadow: 0 0 15px rgba(0, 242, 161, 0.05); }
+        /* Card Ações B3 */
+        .card { background: var(--card-bg); padding: 25px 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .card.opportunity { border: 2px solid var(--success); background: linear-gradient(180deg, rgba(0, 242, 161, 0.05) 0%, rgba(22, 26, 30, 1) 100%); }
 
-        .buy-label { font-size: 0.55rem; font-weight: 800; color: var(--success); margin-bottom: 8px; animation: blink 1.5s infinite; }
-        @keyframes blink { 50% { opacity: 0.3; } }
+        .buy-label { font-size: 0.6rem; font-weight: 800; color: var(--success); margin-bottom: 10px; letter-spacing: 1px; animation: blink 1.5s infinite; }
+        @keyframes blink { 50% { opacity: 0.2; } }
 
-        .ticker-link { font-size: 1.2rem; font-weight: 800; color: #3b82f6; text-decoration: none; margin-bottom: 2px; }
-        .asset-name { font-size: 0.55rem; color: var(--text-muted); font-weight: 600; margin-bottom: 10px; text-transform: uppercase; }
+        .ticker-link { font-size: 1.4rem; font-weight: 800; color: #3b82f6; text-decoration: none; margin-bottom: 4px; }
+        .asset-name { font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-bottom: 15px; text-transform: uppercase; }
         
-        .price { font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; letter-spacing: -1px; }
+        .price { font-size: 1.8rem; font-weight: 800; margin-bottom: 6px; color: #fff; }
         
-        .variation-row { font-size: 0.8rem; font-weight: 700; display: flex; gap: 5px; align-items: center; margin-bottom: 8px; }
-        .up { color: var(--success); }
-        .down { color: var(--danger); }
+        .variation-row { font-size: 0.9rem; font-weight: 700; display: flex; gap: 8px; align-items: center; margin-bottom: 15px; padding: 5px 12px; border-radius: 6px; }
+        .up { color: var(--success); background: rgba(0, 242, 161, 0.1); }
+        .down { color: var(--danger); background: rgba(255, 77, 109, 0.1); }
 
-        /* Widget de Oscilação Cripto */
-        .crypto-box { width: 100%; height: 130px; border-radius: 8px; overflow: hidden; margin: 0; }
+        /* Card Cripto */
+        .crypto-box { width: 100%; height: 140px; border-radius: 8px; overflow: hidden; }
 
-        .info-footer { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); width: 100%; }
-        .info-label { font-size: 0.5rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; }
-        .info-value { font-size: 0.9rem; font-weight: 700; color: var(--warning); }
+        .info-footer { margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--border); width: 100%; }
+        .info-label { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; display: block; margin-bottom: 4px; }
+        .info-value { font-size: 1rem; font-weight: 800; color: var(--warning); }
 
-        .market-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 50px; background: #1a1e23; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 8px; z-index: 9999; font-size: 0.65rem; font-weight: 800; padding: 0 10px; text-align: center; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .dot-open { background: var(--success); box-shadow: 0 0 8px var(--success); }
-        .dot-closed { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+        /* Mercado Footer Fixo */
+        .market-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #1a1e23; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 10px; z-index: 9999; font-size: 0.7rem; font-weight: 800; box-shadow: 0 -4px 10px rgba(0,0,0,0.3); }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-open { background: var(--success); box-shadow: 0 0 10px var(--success); }
+        .dot-closed { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
 
-        @media (max-width: 480px) { 
-            .grid { grid-template-columns: 1fr; } 
-            .card { padding: 20px 15px; }
-            .header h1 { font-size: 1.2rem; }
+        /* Mobile Fix - Forçar 1 coluna e cards largos */
+        @media (max-width: 600px) { 
+            .grid { grid-template-columns: 1fr !important; padding: 10px; } 
+            .card { padding: 30px 20px; }
+            .btn { padding: 15px; font-size: 0.75rem; }
+            .header h1 { font-size: 1.3rem; }
         }
     </style>
 </head>
@@ -66,8 +72,8 @@
 <div class="container">
     <div class="header"><h1>Dash Estratégico</h1></div>
     <div class="btn-container">
-        <button class="btn" onclick="toggleAll(true)">EXPANDIR</button>
-        <button class="btn" onclick="toggleAll(false)">RECOLHER</button>
+        <button class="btn" onclick="toggleAll(true)">EXPANDIR TUDO</button>
+        <button class="btn" onclick="toggleAll(false)">RECOLHER TUDO</button>
     </div>
     <div id="dashboard-content"></div>
 </div>
@@ -93,7 +99,7 @@
         const now = new Date();
         const isOpen = (now.getDay() >= 1 && now.getDay() <= 5) && (now.getHours() >= 10 && now.getHours() < 18);
         document.getElementById('dot').className = `status-dot ${isOpen ? 'dot-open' : 'dot-closed'}`;
-        document.getElementById('statusText').innerText = `B3 ${isOpen ? 'ABERTO' : 'FECHADO'} | CRIPTO 24H - ${now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+        document.getElementById('statusText').innerText = `B3 ${isOpen ? 'ABERTO' : 'FECHADO'} | CRIPTO 24H - ${now.toLocaleTimeString('pt-BR')}`;
     }
 
     async function init() {
@@ -123,14 +129,11 @@
     function renderCrypto(grid, ticker) {
         const divId = `tv_${ticker}`;
         grid.innerHTML += `<div class="card"><div id="${divId}" class="crypto-box"></div></div>`;
-        
         new TradingView.MediumWidget({
             "symbols": [[`BINANCE:${ticker}|1D`]],
             "chartOnly": false, "width": "100%", "height": "100%", "locale": "br",
             "colorTheme": "dark", "gridLineColor": "transparent", "trendLineColor": "#3b82f6",
-            "fontColor": "#787b86", "underLineColor": "rgba(55, 125, 255, 0.1)",
-            "isTransparent": true, "autosize": true, "container_id": divId,
-            "showFloatingTooltip": false, "showVolume": false
+            "isTransparent": true, "autosize": true, "container_id": divId
         });
     }
 
@@ -155,8 +158,8 @@
                         <span>R$ ${Math.abs(asset.regularMarketChange).toFixed(2)}</span>
                     </div>
                     <div class="info-footer">
-                        <span class="info-label">Preço Teto</span><br>
-                        <span class="info-value">${teto > 0 ? 'R$ '+teto.toFixed(2) : '---'}</span>
+                        <span class="info-label">Preço Teto</span>
+                        <span class="info-value">R$ ${teto > 0 ? teto.toFixed(2) : '---'}</span>
                     </div>
                 </div>`;
         } catch (e) { console.error("Erro:", ticker); }
