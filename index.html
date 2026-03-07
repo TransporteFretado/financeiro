@@ -1,4 +1,134 @@
-const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor Integrado | GTB Solution</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0e11;
+            --card-bg: #161a1e;
+            --accent: #ffffff;
+            --success: #00f2a1;
+            --danger: #ff4d6d;
+            --text-main: #e3e6e8;
+            --text-muted: #707a8a;
+            --border: #2b3139;
+            --link-color: #3b82f6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: 'Sora', sans-serif; 
+            background: var(--bg); 
+            color: var(--text-main); 
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.4rem; font-weight: 800; color: var(--accent); text-transform: uppercase; }
+        .header p { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+        .btn-container { display: flex; gap: 8px; margin-bottom: 25px; }
+        .btn {
+            background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border);
+            padding: 10px 18px; border-radius: 4px; font-size: 0.65rem;
+            font-weight: 700; cursor: pointer; text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: var(--border); }
+
+        .sector-section {
+            width: 100%; max-width: 900px; margin-bottom: 16px;
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 8px; overflow: hidden;
+        }
+
+        .sector-header {
+            padding: 14px 20px; display: flex; justify-content: space-between;
+            align-items: center; cursor: pointer; background: rgba(255, 255, 255, 0.02);
+        }
+
+        .sector-title { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); 
+            gap: 1px; 
+            background: var(--border); 
+        }
+        
+        .collapsed .grid { display: none; }
+
+        .card { 
+            background: var(--card-bg); 
+            padding: 24px 15px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            justify-content: space-between;
+            min-height: 200px;
+        }
+
+        .ticker-link { 
+            font-size: 1.1rem; 
+            font-weight: 800; 
+            color: var(--link-color); 
+            text-decoration: none;
+            margin-bottom: 2px;
+        }
+        .ticker-link:hover { text-decoration: underline; }
+
+        .name { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 15px; text-align: center; }
+        .price { font-size: 1.7rem; font-weight: 700; margin-bottom: 4px; letter-spacing: -1px; }
+        .variation { font-size: 0.8rem; font-weight: 700; }
+        .up { color: var(--success); }
+        .down { color: var(--danger); }
+
+        .info-footer { 
+            margin-top: 15px; padding-top: 12px; 
+            border-top: 1px solid rgba(255,255,255,0.03); 
+            width: 100%; text-align: center; 
+        }
+        .info-label { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; }
+        .info-value { font-size: 0.85rem; font-weight: 600; }
+
+        .footer-status {
+            position: fixed; bottom: 20px; padding: 10px 18px;
+            background: #1a1e23; border-radius: 4px; border: 1px solid var(--border);
+            font-size: 0.6rem; font-weight: 700; display: flex; align-items: center; gap: 8px;
+            z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .dot { width: 7px; height: 7px; border-radius: 50%; }
+        .dot-green { background: var(--success); box-shadow: 0 0 8px var(--success); }
+        .dot-red { background: var(--danger); }
+
+        @media (max-width: 480px) { .grid { grid-template-columns: 1fr 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>GTB SOLUTION</h1>
+    <p>Monitor Integrado | B3 & Criptomoedas</p>
+</div>
+
+<div class="btn-container">
+    <button class="btn" onclick="toggleAll(false)">Expandir Todos</button>
+    <button class="btn" onclick="toggleAll(true)">Recolher Todos</button>
+</div>
+
+<div id="dashboard-content" style="width: 100%; max-width: 900px; padding-bottom: 100px;"></div>
+
+<div class="footer-status" id="marketStatus"></div>
+
+<script>
+    const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
     
     const sectors = {
         "Criptomoedas": { "BTC": "Bitcoin", "ETH": "Ethereum", "SOL": "Solana", "BNB": "Binance" },
@@ -43,36 +173,31 @@ const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
                     const response = await fetch(url);
                     const data = await response.json();
                     
-                    // Ajuste na desestruturação dos dados
+                    // A Brapi retorna 'coins' para cripto e 'results' para ações
                     const stockData = isCrypto ? data.coins?.[0] : data.results?.[0];
                     
                     if (stockData) {
                         updateCard(stockData, stocks[ticker], grid, isCrypto);
-                    } else {
-                        console.error(`Ativo não encontrado: ${ticker}`);
                     }
-                } catch (e) { 
-                    console.error(`Erro ao buscar ${ticker}:`, e); 
-                }
+                } catch (e) { console.error(`Erro no ativo ${ticker}:`, e); }
             }
         }
         updateMarketStatus();
     }
 
     function updateCard(stock, fullName, grid, isCrypto) {
-        // Define o ID único do card
         const symbol = isCrypto ? stock.coin : stock.symbol;
         const cardId = `card-${symbol}`;
         let card = document.getElementById(cardId);
         
-        // Mapeamento dinâmico de campos para evitar 'undefined'
+        // Mapeamento seguro de campos
         const price = stock.regularMarketPrice || 0;
         const changePct = stock.regularMarketChangePercent || 0;
         const changeAbs = Math.abs(stock.regularMarketChange || 0);
         
-        // Preço de abertura ou referência anterior
+        // Para cripto, se não houver 'open', calculamos o preço de 24h atrás
         const referencePrice = isCrypto 
-            ? (stock.regularMarketPrice / (1 + (changePct / 100))) // Cálculo aproximado se a API não enviar open
+            ? (price / (1 + (changePct / 100))) 
             : (stock.regularMarketOpen || stock.regularMarketPreviousClose || price);
 
         const isUp = changePct >= 0;
@@ -88,7 +213,7 @@ const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
                 <span class="name">${fullName}</span>
             </div>
             <div style="display:flex; flex-direction:column; align-items:center;">
-                <span class="price">R$ ${price.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: isCrypto ? 2 : 2})}</span>
+                <span class="price">R$ ${price.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                 <span class="variation ${colorClass}">${isUp ? '+' : ''}${changePct.toFixed(2)}% | R$ ${changeAbs.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
             </div>
             <div class="info-footer">
@@ -110,7 +235,7 @@ const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
         const now = new Date();
         const day = now.getDay();
         const hour = now.getHours();
-        // B3 funciona das 10h às 18h em dias úteis
+        // Mercado B3: Seg-Sex, 10h às 18h
         const isOpen = (day >= 1 && day <= 5) && (hour >= 10 && hour < 18);
 
         const statusEl = document.getElementById('marketStatus');
@@ -128,4 +253,9 @@ const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
     // Inicialização
     createStructure();
     loadStocks();
-    setInterval(loadStocks, 60000); // Atualiza a cada 1 minuto
+    
+    // Atualização automática a cada 60 segundos
+    setInterval(loadStocks, 60000);
+</script>
+</body>
+</html>
