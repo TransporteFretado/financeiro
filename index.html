@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dash Estratégico</title>
+    <title>GTB Terminal</title>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -15,69 +15,71 @@
         
         .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 10px; }
         .header { text-align: center; margin-bottom: 15px; }
-        .header h1 { font-size: 1.2rem; font-weight: 800; text-transform: uppercase; }
+        .header h1 { font-size: 1.2rem; font-weight: 800; text-transform: uppercase; color: #fff; }
         
         .btn-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
-        .btn { flex: 1; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border); padding: 10px; border-radius: 8px; font-size: 0.6rem; font-weight: 800; cursor: pointer; }
+        .btn { flex: 1; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border); padding: 10px; border-radius: 8px; font-size: 0.65rem; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn:active { background: var(--border); }
 
-        .sector-section { margin-bottom: 8px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-        .sector-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .sector-title { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+        .sector-section { margin-bottom: 10px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .sector-header { padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .sector-title { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
-        .grid { display: none; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; padding: 8px; background: var(--bg); }
+        /* Grid Responsivo */
+        .grid { display: none; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; padding: 10px; background: var(--bg); }
         .expanded .grid { display: grid; }
 
         /* Card Base */
-        .card { background: var(--card-bg); padding: 12px 8px; border-radius: 8px; border: 1px solid var(--border); text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; min-height: 140px; }
-        .card.opportunity { border: 1.5px solid var(--success); }
-
-        .buy-label { font-size: 0.45rem; font-weight: 800; color: var(--success); margin-bottom: 5px; animation: blink 1.5s infinite; }
-        @keyframes blink { 50% { opacity: 0.2; } }
-
-        .ticker-link { font-size: 1rem; font-weight: 800; color: #3b82f6; text-decoration: none; }
-        .asset-name { font-size: 0.5rem; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .card { background: var(--card-bg); padding: 15px 10px; border-radius: 10px; border: 1px solid var(--border); text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; min-height: 150px; }
         
-        .price { font-size: 1.2rem; font-weight: 800; margin-bottom: 2px; }
+        /* Degradê de Oportunidade Reintroduzido */
+        .card.opportunity { 
+            border: 1.5px solid var(--success); 
+            background: linear-gradient(180deg, rgba(0, 242, 161, 0.08) 0%, rgba(22, 26, 30, 1) 100%);
+        }
+
+        .buy-label { font-size: 0.5rem; font-weight: 800; color: var(--success); margin-bottom: 6px; letter-spacing: 1px; animation: blink 1.5s infinite; }
+        @keyframes blink { 50% { opacity: 0.3; } }
+
+        .ticker-link { font-size: 1rem; font-weight: 800; color: #3b82f6; text-decoration: none; margin-bottom: 2px; }
+        .asset-name { font-size: 0.55rem; color: var(--text-muted); font-weight: 600; margin-bottom: 10px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         
-        .variation-row { font-size: 0.7rem; font-weight: 700; display: flex; gap: 4px; align-items: center; margin-bottom: 8px; }
+        .price { font-size: 1.25rem; font-weight: 800; margin-bottom: 4px; color: #fff; }
+        
+        .variation-row { font-size: 0.75rem; font-weight: 700; display: flex; gap: 5px; align-items: center; margin-bottom: 10px; }
         .up { color: var(--success); }
         .down { color: var(--danger); }
 
-        /* Widget Cripto */
-        .crypto-box { width: 100%; height: 90px; border-radius: 4px; overflow: hidden; }
+        /* Widget Cripto - Aumentado para melhor visualização */
+        .crypto-box { width: 100%; height: 110px; border-radius: 6px; overflow: hidden; margin-top: 5px; }
 
-        /* --- AJUSTE ESPECÍFICO CRIPTO (REDUZIDO) --- */
-        #sec-Criptomoedas .card { min-height: 110px !important; padding: 8px 5px !important; }
-        #sec-Criptomoedas .crypto-box { height: 75px !important; }
-        #sec-Criptomoedas .sector-title { font-size: 0.65rem; }
+        .info-footer { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border); width: 100%; }
+        .info-label { font-size: 0.5rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+        .info-value { font-size: 0.85rem; font-weight: 800; color: var(--warning); }
 
-        .info-footer { margin-top: auto; padding-top: 5px; border-top: 1px solid var(--border); width: 100%; }
-        .info-label { font-size: 0.45rem; color: var(--text-muted); text-transform: uppercase; }
-        .info-value { font-size: 0.8rem; font-weight: 800; color: var(--warning); }
-
-        .market-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 45px; background: #1a1e23; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 8px; z-index: 9999; font-size: 0.6rem; font-weight: 800; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; }
-        .dot-open { background: var(--success); }
+        /* Status Bar */
+        .market-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 50px; background: #1a1e23; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 10px; z-index: 9999; font-size: 0.65rem; font-weight: 800; }
+        .status-dot { width: 9px; height: 9px; border-radius: 50%; }
+        .dot-open { background: var(--success); box-shadow: 0 0 8px var(--success); }
         .dot-closed { background: var(--danger); }
 
+        /* Mobile Fixes */
         @media (max-width: 600px) { 
-            .grid { grid-template-columns: 1fr 1fr !important; } 
-            .price { font-size: 1.1rem; }
-            .ticker-link { font-size: 0.9rem; }
-            
-            /* Criptos ainda menores no mobile */
-            #sec-Criptomoedas .crypto-box { height: 70px !important; }
-            #sec-Criptomoedas .grid { gap: 6px !important; }
+            .grid { grid-template-columns: 1fr 1fr !important; gap: 8px; padding: 8px; } 
+            .card { padding: 18px 8px; min-height: 160px; }
+            .price { font-size: 1.15rem; }
+            .ticker-link { font-size: 0.95rem; }
+            .crypto-box { height: 120px; } /* Maior no mobile para caber o gráfico do TradingView */
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header"><h1>Dash Estratégico</h1></div>
+    <div class="header"><h1>GTB TERMINAL</h1></div>
     <div class="btn-container">
-        <button class="btn" onclick="toggleAll(true)">EXPANDIR</button>
-        <button class="btn" onclick="toggleAll(false)">RECOLHER</button>
+        <button class="btn" onclick="toggleAll(true)">EXPANDIR TUDO</button>
+        <button class="btn" onclick="toggleAll(false)">RECOLHER TUDO</button>
     </div>
     <div id="dashboard-content"></div>
 </div>
@@ -103,7 +105,7 @@
         const now = new Date();
         const isOpen = (now.getDay() >= 1 && now.getDay() <= 5) && (now.getHours() >= 10 && now.getHours() < 18);
         document.getElementById('dot').className = `status-dot ${isOpen ? 'dot-open' : 'dot-closed'}`;
-        document.getElementById('statusText').innerText = `B3 ${isOpen ? 'ON' : 'OFF'} | ${now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+        document.getElementById('statusText').innerText = `B3 ${isOpen ? 'ABERTO' : 'FECHADO'} | ${now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
     }
 
     async function init() {
@@ -113,7 +115,7 @@
             container.innerHTML += `
                 <div class="sector-section" id="sec-${id}">
                     <div class="sector-header" onclick="toggleSector('${id}')">
-                        <span class="sector-title">${name}</span>
+                        <span class="sector-title">${name} (${Object.keys(list).length})</span>
                         <span>▼</span>
                     </div>
                     <div class="grid" id="grid-${id}"></div>
@@ -161,7 +163,7 @@
                         <span>R$${Math.abs(asset.regularMarketChange).toFixed(2)}</span>
                     </div>
                     <div class="info-footer">
-                        <span class="info-label">TETO:</span> <span class="info-value">${teto > 0 ? teto.toFixed(2) : '--'}</span>
+                        <span class="info-label">PREÇO TETO:</span> <span class="info-value">R$ ${teto > 0 ? teto.toFixed(2) : '--'}</span>
                     </div>
                 </div>`;
         } catch (e) { console.error(ticker); }
