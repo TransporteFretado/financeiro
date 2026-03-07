@@ -12,86 +12,82 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text-main); line-height: 1.2; }
+        body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text-main); padding-bottom: 60px; }
 
-        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 15px 10px; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px 10px; }
         
-        /* Status do Mercado */
-        .market-status {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            background: var(--card-bg); border: 1px solid var(--border);
-            padding: 8px; border-radius: 50px; margin-bottom: 20px; font-size: 0.65rem; font-weight: 800;
-        }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 5px currentColor; }
-        .dot-open { background-color: var(--success); color: var(--success); }
-        .dot-closed { background-color: var(--danger); color: var(--danger); }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-size: 1.6rem; font-weight: 900; }
+        .header p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-top: 5px; }
 
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px; }
-
-        .btn-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+        .btn-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; }
         .btn {
             background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border);
-            padding: 10px 15px; border-radius: 8px; font-size: 0.6rem; font-weight: 800; cursor: pointer;
+            padding: 10px 15px; border-radius: 8px; font-size: 0.65rem; font-weight: 800; cursor: pointer;
         }
 
-        /* Setores e Grids */
+        /* Setores */
         .sector-section { margin-bottom: 15px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .sector-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(255,255,255,0.03); }
-        .sector-title { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+        .sector-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(255,255,255,0.03); }
+        .sector-title { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; padding: 10px; background: var(--bg); display: none; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; padding: 12px; background: var(--bg); display: none; }
         .expanded .grid { display: grid; }
 
-        /* Cards Mobile-First */
+        /* Card Ações B3 */
         .card { 
-            background: var(--card-bg); padding: 15px; border-radius: 10px;
+            background: var(--card-bg); padding: 20px 15px; border-radius: 10px;
             display: flex; flex-direction: column; align-items: center; position: relative; 
             border: 1px solid var(--border); text-align: center;
         }
-        .card.opportunity { border: 1.5px solid var(--success); }
+        .card.opportunity { border: 1.5px solid var(--success); box-shadow: 0 0 10px rgba(0, 242, 161, 0.1); }
 
-        .buy-label { font-size: 0.5rem; font-weight: 800; color: var(--success); margin-bottom: 4px; animation: blink 1.5s infinite; }
+        .buy-label { font-size: 0.5rem; font-weight: 800; color: var(--success); margin-bottom: 6px; animation: blink 1.5s infinite; }
         @keyframes blink { 50% { opacity: 0.3; } }
 
-        .ticker-link { font-size: 1.1rem; font-weight: 800; color: #3b82f6; text-decoration: none; }
-        .asset-name { font-size: 0.55rem; color: var(--text-muted); margin-bottom: 8px; }
-        .price { font-size: 1.4rem; font-weight: 800; margin: 4px 0; letter-spacing: -0.5px; }
+        .ticker-link { font-size: 1.2rem; font-weight: 800; color: #3b82f6; text-decoration: none; }
+        .asset-name { font-size: 0.55rem; color: var(--text-muted); margin-bottom: 10px; }
+        .price { font-size: 1.6rem; font-weight: 800; margin: 5px 0; letter-spacing: -0.5px; }
         
-        .var-box { font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; margin-bottom: 8px; }
+        .var-box { font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 4px; }
         .up { color: var(--success); background: rgba(0, 242, 161, 0.1); }
         .down { color: var(--danger); background: rgba(255, 77, 109, 0.1); }
 
-        /* Container do Gráfico Cripto */
-        .crypto-chart { width: 100%; height: 50px; margin-top: 10px; pointer-events: none; }
+        /* Widget Cripto (TradingView) */
+        .crypto-widget-container { width: 100%; height: 160px; border-radius: 8px; overflow: hidden; background: #131722; }
 
-        .info-footer { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); width: 100%; }
-        .info-label { font-size: 0.5rem; color: var(--text-muted); text-transform: uppercase; }
-        .info-value { font-size: 0.8rem; font-weight: 700; color: var(--warning); }
+        .info-footer { margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border); width: 100%; }
+        .info-label { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; }
+        .info-value { font-size: 0.9rem; font-weight: 700; color: var(--warning); }
 
-        /* Responsividade Extrema (Celular) */
+        /* Status Fixado no Rodapé */
+        .market-footer {
+            position: fixed; bottom: 0; left: 0; right: 0; height: 50px;
+            background: #1a1e23; border-top: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            z-index: 2000; font-size: 0.7rem; font-weight: 800;
+        }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-open { background-color: var(--success); box-shadow: 0 0 8px var(--success); }
+        .dot-closed { background-color: var(--danger); box-shadow: 0 0 8px var(--danger); }
+
+        /* Mobile Responsividade */
         @media (max-width: 480px) {
-            .grid { grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; } /* Dois blocos por linha no celular para caber mais */
-            .card { padding: 10px 5px; }
-            .ticker-link { font-size: 0.9rem; }
-            .price { font-size: 1.1rem; }
-            .var-box { font-size: 0.65rem; padding: 2px 4px; }
-            .asset-name { font-size: 0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 90%; }
-            .buy-label { font-size: 0.45rem; }
-            .crypto-chart { height: 35px; }
+            .grid { grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; }
+            .card { padding: 15px 5px; }
+            .ticker-link { font-size: 1rem; }
+            .price { font-size: 1.2rem; }
+            .var-box { font-size: 0.7rem; }
+            .crypto-widget-container { height: 140px; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="marketStatus" class="market-status">
-        <div class="status-dot"></div>
-        <span>MERCADO B3 CARREGANDO...</span>
-    </div>
-
     <div class="header">
         <h1>GTB TERMINAL</h1>
+        <p>Dashboard Estratégico 📈</p>
     </div>
 
     <div class="btn-container">
@@ -102,41 +98,43 @@
     <div id="dashboard-content"></div>
 </div>
 
+<div class="market-footer" id="marketFooter">
+    <div class="status-dot" id="dot"></div>
+    <span id="statusText">CARREGANDO MERCADO...</span>
+</div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+
 <script>
     const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
     const config = { "BBAS3": 30.00, "ITUB4": 45.00, "KLBN11": 22.00, "MXRF11": 10.50 };
 
     const sectors = {
-        "Criptomoedas": { "BTCBRL": "Bitcoin", "ETHBRL": "Ethereum", "SOLBRL": "Solana", "BNBBRL": "Binance Coin" },
+        "Criptomoedas": ["BTCBRL", "ETHBRL", "SOLBRL", "BNBBRL"],
         "Bancos & Seguros": { "BBAS3": "Banco do Brasil", "BBDC4": "Bradesco", "ITUB4": "Itaú", "CXSE3": "Caixa", "BBSE3": "BB Seguridade" },
         "FIIs": { "MXRF11": "Maxi Renda", "HGLG11": "CSHG Logística", "XPLG11": "XP Log" },
         "Papel & Indústria": { "KLBN11": "Klabin", "WEGE3": "WEG S.A" }
     };
 
-    function updateMarketClock() {
+    function updateMarketStatus() {
         const now = new Date();
         const day = now.getDay();
         const hour = now.getHours();
-        const min = now.getMinutes();
-        const timeStr = now.toLocaleTimeString('pt-BR');
-        
         const isOpen = (day >= 1 && day <= 5) && (hour >= 10 && hour < 18);
-        const statusEl = document.getElementById('marketStatus');
         
-        statusEl.innerHTML = `
-            <div class="status-dot ${isOpen ? 'dot-open' : 'dot-closed'}"></div>
-            MERCADO B3 ${isOpen ? 'ABERTO' : 'FECHADO'} - ${timeStr}
-        `;
+        document.getElementById('dot').className = `status-dot ${isOpen ? 'dot-open' : 'dot-closed'}`;
+        document.getElementById('statusText').innerText = `MERCADO B3 ${isOpen ? 'ABERTO' : 'FECHADO'} - ${now.toLocaleTimeString('pt-BR')}`;
     }
 
     function createStructure() {
         const container = document.getElementById('dashboard-content');
         for (const [name, list] of Object.entries(sectors)) {
             const id = name.replace(/[^a-zA-Z]/g, '');
+            const count = Array.isArray(list) ? list.length : Object.keys(list).length;
             container.innerHTML += `
                 <div class="sector-section" id="sec-${id}">
                     <div class="sector-header" onclick="toggleSector('${id}')">
-                        <span class="sector-title">${name} (${Object.keys(list).length})</span>
+                        <span class="sector-title">${name} (${count})</span>
                         <span>▼</span>
                     </div>
                     <div class="grid" id="grid-${id}"></div>
@@ -146,93 +144,62 @@
 
     async function loadAssets() {
         for (const [sector, list] of Object.entries(sectors)) {
-            const grid = document.getElementById(`grid-${sector.replace(/[^a-zA-Z]/g, '')}`);
-            const isCrypto = sector === "Criptomoedas";
+            const gridId = sector.replace(/[^a-zA-Z]/g, '');
+            const grid = document.getElementById(`grid-${gridId}`);
             
-            for (const ticker in list) {
-                if (isCrypto) {
-                    renderCryptoCard(grid, ticker, list[ticker]);
-                } else {
-                    renderStockCard(grid, ticker, list[ticker]);
+            if (sector === "Criptomoedas") {
+                list.forEach(ticker => {
+                    const divId = `tv_${ticker}`;
+                    grid.innerHTML += `<div class="card"><div id="${divId}" class="crypto-widget-container"></div></div>`;
+                    
+                    setTimeout(() => {
+                        new TradingView.MediumWidget({
+                            "symbols": [[`BINANCE:${ticker}|1D`]],
+                            "chartOnly": false, "width": "100%", "height": "100%",
+                            "locale": "br", "colorTheme": "dark", "gridLineColor": "rgba(42, 46, 57, 0)",
+                            "fontColor": "#787b86", "isTransparent": true, "autosize": true,
+                            "container_id": divId
+                        });
+                    }, 100);
+                });
+            } else {
+                for (const ticker in list) {
+                    try {
+                        const res = await fetch(`https://brapi.dev/api/quote/${ticker}?token=${API_TOKEN}`);
+                        const data = await res.json();
+                        const asset = data.results[0];
+                        if (asset) {
+                            const teto = config[ticker] || 0;
+                            const isOpp = teto > 0 && asset.regularMarketPrice <= teto;
+                            const isUp = asset.regularMarketChangePercent >= 0;
+                            grid.innerHTML += `
+                                <div class="card ${isOpp ? 'opportunity' : ''}">
+                                    ${isOpp ? '<span class="buy-label">OPORTUNIDADE DE COMPRA</span>' : ''}
+                                    <a href="https://www.google.com/finance/quote/${ticker}:BVMF" target="_blank" class="ticker-link">${ticker}</a>
+                                    <span class="asset-name">${list[ticker]}</span>
+                                    <span class="price">R$ ${asset.regularMarketPrice.toLocaleString('pt-BR', {minimumFractionDigits:2})}</span>
+                                    <span class="var-box ${isUp?'up':'down'}">
+                                        ${isUp?'+':''}${asset.regularMarketChangePercent.toFixed(2)}% | R$ ${Math.abs(asset.regularMarketChange).toFixed(2)}
+                                    </span>
+                                    <div class="info-footer">
+                                        <span class="info-label">Preço Teto</span>
+                                        <span class="info-value">R$ ${teto > 0 ? teto.toFixed(2) : '---'}</span>
+                                    </div>
+                                </div>`;
+                        }
+                    } catch (e) {}
                 }
             }
         }
     }
 
-    async function renderStockCard(grid, ticker, name) {
-        try {
-            const res = await fetch(`https://brapi.dev/api/quote/${ticker}?token=${API_TOKEN}`);
-            const data = await res.json();
-            const asset = data.results[0];
-            const teto = config[ticker] || 0;
-            const isOpp = teto > 0 && asset.regularMarketPrice <= teto;
-            const isUp = asset.regularMarketChangePercent >= 0;
-
-            grid.innerHTML += `
-                <div class="card ${isOpp ? 'opportunity' : ''}">
-                    ${isOpp ? '<span class="buy-label">OPORTUNIDADE</span>' : ''}
-                    <a href="https://www.google.com/finance/quote/${ticker}:BVMF" target="_blank" class="ticker-link">${ticker}</a>
-                    <span class="asset-name">${name}</span>
-                    <span class="price">${asset.regularMarketPrice.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</span>
-                    <span class="var-box ${isUp?'up':'down'}">
-                        ${isUp?'+':''}${asset.regularMarketChangePercent.toFixed(2)}% | ${Math.abs(asset.regularMarketChange).toFixed(2)}
-                    </span>
-                    <div class="info-footer">
-                        <span class="info-label">Preço Teto</span><br>
-                        <span class="info-value">${teto > 0 ? teto.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : '---'}</span>
-                    </div>
-                </div>`;
-        } catch (e) {}
-    }
-
-    async function renderCryptoCard(grid, ticker, name) {
-        const pair = ticker.replace('BRL', '');
-        grid.innerHTML += `
-            <div class="card">
-                <a href="https://www.google.com/finance/quote/${pair}-BRL" target="_blank" class="ticker-link">${ticker}</a>
-                <span class="asset-name">${name}</span>
-                <span class="price" id="p-${ticker}">...</span>
-                <span class="var-box" id="v-${ticker}">...</span>
-                <div class="crypto-chart" id="chart-${ticker}"></div>
-            </div>`;
-
-        // Gráfico TradingView (Mini)
-        new TradingView.MediumWidget({
-            "symbols": [[`BINANCE:${ticker}|1D`]],
-            "chartOnly": true, "width": "100%", "height": "100%",
-            "locale": "br", "colorTheme": "dark", "gridLineColor": "transparent",
-            "fontColor": "#707a8a", "underLineColor": "rgba(59, 130, 246, 0.15)",
-            "isTransparent": true, "autosize": true, "container_id": `chart-${ticker}`
-        });
-
-        // Preço via Binance
-        setInterval(async () => {
-            try {
-                const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${ticker}`);
-                const data = await res.json();
-                document.getElementById(`p-${ticker}`).innerText = parseFloat(data.lastPrice).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-                const change = parseFloat(data.priceChangePercent);
-                const varEl = document.getElementById(`v-${ticker}`);
-                varEl.innerText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
-                varEl.className = `var-box ${change >= 0 ? 'up' : 'down'}`;
-            } catch(e) {}
-        }, 3000);
-    }
-
     function toggleSector(id) { document.getElementById(`sec-${id}`).classList.toggle('expanded'); }
     function toggleAll(expand) { document.querySelectorAll('.sector-section').forEach(s => expand ? s.classList.add('expanded') : s.classList.remove('expanded')); }
 
-    // Script do TradingView
-    const script = document.createElement('script');
-    script.src = "https://s3.tradingview.com/tv.js";
-    script.onload = () => {
-        createStructure();
-        loadAssets();
-        setInterval(updateMarketClock, 1000);
-        updateMarketClock();
-    };
-    document.head.appendChild(script);
-
+    createStructure();
+    loadAssets();
+    setInterval(updateMarketStatus, 1000);
+    updateMarketStatus();
 </script>
 </body>
 </html>
