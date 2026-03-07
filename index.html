@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitor B3 & Crypto | GTB Solution</title>
+    <title>Monitor Integrado | GTB Solution</title>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -15,7 +15,7 @@
             --text-main: #e3e6e8;
             --text-muted: #707a8a;
             --border: #2b3139;
-            --link-color: #0055ff;
+            --link-color: #3b82f6;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,7 +37,7 @@
         .btn-container { display: flex; gap: 8px; margin-bottom: 25px; }
         .btn {
             background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border);
-            padding: 8px 16px; border-radius: 4px; font-size: 0.6rem;
+            padding: 10px 18px; border-radius: 4px; font-size: 0.65rem;
             font-weight: 700; cursor: pointer; text-transform: uppercase;
         }
 
@@ -70,20 +70,17 @@
             flex-direction: column; 
             align-items: center;
             justify-content: space-between;
-            min-height: 190px;
-            position: relative;
+            min-height: 200px;
         }
 
-        /* Estilo do Link */
         .ticker-link { 
-            font-size: 1.05rem; 
+            font-size: 1.1rem; 
             font-weight: 800; 
             color: var(--link-color); 
             text-decoration: none;
             margin-bottom: 2px;
-            transition: opacity 0.2s;
         }
-        .ticker-link:hover { opacity: 0.7; text-decoration: underline; }
+        .ticker-link:hover { text-decoration: underline; }
 
         .name { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 15px; text-align: center; }
         .price { font-size: 1.7rem; font-weight: 700; margin-bottom: 4px; letter-spacing: -1px; }
@@ -92,19 +89,18 @@
         .down { color: var(--danger); }
 
         .info-footer { 
-            margin-top: 15px; 
-            padding-top: 12px; 
+            margin-top: 15px; padding-top: 12px; 
             border-top: 1px solid rgba(255,255,255,0.03); 
-            width: 100%; 
-            text-align: center; 
+            width: 100%; text-align: center; 
         }
-        .info-label { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; display: block; }
-        .info-value { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+        .info-label { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; }
+        .info-value { font-size: 0.85rem; font-weight: 600; }
 
         .footer-status {
             position: fixed; bottom: 20px; padding: 10px 18px;
             background: #1a1e23; border-radius: 4px; border: 1px solid var(--border);
             font-size: 0.6rem; font-weight: 700; display: flex; align-items: center; gap: 8px;
+            z-index: 100;
         }
         .dot { width: 7px; height: 7px; border-radius: 50%; }
         .dot-green { background: var(--success); box-shadow: 0 0 8px var(--success); }
@@ -117,12 +113,12 @@
 
 <div class="header">
     <h1>GTB SOLUTION</h1>
-    <p>Monitor Integrado | B3 & Cryptocurrencies</p>
+    <p>Monitor Integrado | B3 & Criptomoedas</p>
 </div>
 
 <div class="btn-container">
-    <button class="btn" onclick="toggleAll(false)">Expandir</button>
-    <button class="btn" onclick="toggleAll(true)">Recolher</button>
+    <button class="btn" onclick="toggleAll(false)">Expandir Todos</button>
+    <button class="btn" onclick="toggleAll(true)">Recolher Todos</button>
 </div>
 
 <div id="dashboard-content" style="width: 100%; max-width: 900px; padding-bottom: 100px;"></div>
@@ -132,14 +128,8 @@
 <script>
     const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
     
-    // Configuração de setores e ativos
     const sectors = {
-        "Criptomoedas": { 
-            "BTC": "Bitcoin", 
-            "ETH": "Ethereum", 
-            "SOL": "Solana",
-            "BNB": "Binance Coin"
-        },
+        "Criptomoedas": { "BTC": "Bitcoin", "ETH": "Ethereum", "SOL": "Solana", "BNB": "Binance" },
         "Bancos & Seguros": { "BBAS3": "Banco do Brasil", "BBDC4": "Bradesco", "BBSE3": "BB Seguridade", "CXSE3": "Caixa Seguridade", "ITUB4": "Itaú Unibanco" },
         "Energia": { "EQTL3": "Equatorial Energia", "TAEE11": "Taesa" },
         "Papel & Indústria": { "KLBN3": "Klabin Ord.", "KLBN11": "Klabin Unit", "UNIP6": "Unipar", "WEGE3": "WEG S.A." },
@@ -151,7 +141,7 @@
         content.innerHTML = '';
         for (const [sectorName, stocks] of Object.entries(sectors)) {
             const count = Object.keys(stocks).length;
-            const sectionId = sectorName.replace(/\s+|&/g, '');
+            const sectionId = sectorName.replace(/[^a-zA-Z]/g, '');
             const section = document.createElement('div');
             section.className = 'sector-section';
             section.id = `sec-${sectionId}`;
@@ -168,55 +158,68 @@
 
     async function loadStocks() {
         for (const [sectorName, stocks] of Object.entries(sectors)) {
-            const grid = document.getElementById(`grid-${sectorName.replace(/\s+|&/g, '')}`);
+            const sectionId = sectorName.replace(/[^a-zA-Z]/g, '');
+            const grid = document.getElementById(`grid-${sectionId}`);
             const isCrypto = sectorName === "Criptomoedas";
 
             for (const ticker in stocks) {
                 try {
-                    // Para cripto, a API costuma exigir o par (ex: BTCBRL)
-                    const queryTicker = isCrypto ? `${ticker}BRL` : ticker;
-                    const response = await fetch(`https://brapi.dev/api/quote/${queryTicker}?token=${API_TOKEN}`);
+                    // Endpoint diferenciado para Cripto vs Ações
+                    const url = isCrypto 
+                        ? `https://brapi.dev/api/v2/crypto?coin=${ticker}&currency=BRL&token=${API_TOKEN}`
+                        : `https://brapi.dev/api/quote/${ticker}?token=${API_TOKEN}`;
+                    
+                    const response = await fetch(url);
                     const data = await response.json();
-                    if (data.results?.[0]) updateCard(data.results[0], stocks[ticker], grid, isCrypto);
-                } catch (e) { console.error(ticker, e); }
+                    
+                    // A API retorna estruturas diferentes para Cripto (coins) e Quote (results)
+                    const stockData = isCrypto ? data.coins?.[0] : data.results?.[0];
+                    
+                    if (stockData) {
+                        updateCard(stockData, stocks[ticker], grid, isCrypto);
+                    }
+                } catch (e) { console.error(`Erro no ativo ${ticker}:`, e); }
             }
         }
         updateMarketStatus();
     }
 
     function updateCard(stock, fullName, grid, isCrypto) {
-        let card = document.getElementById(`card-${stock.symbol}`);
-        const isUp = stock.regularMarketChangePercent >= 0;
-        const colorClass = isUp ? 'up' : 'down';
-        const sign = isUp ? '+' : '';
-        const open = stock.regularMarketOpen || stock.regularMarketPreviousClose || 0;
-        const changeAbs = Math.abs(stock.regularMarketChange).toFixed(2);
+        let cardId = `card-${isCrypto ? stock.coin : stock.symbol}`;
+        let card = document.getElementById(cardId);
         
-        // Lógica do Link para Google Finance
-        // Ações: google.com/finance/quote/BBAS3:BVMF
-        // Cripto: google.com/finance/quote/BTC-BRL
+        // Mapeamento de campos (Cripto usa nomes diferentes na API)
+        const symbol = isCrypto ? stock.coin : stock.symbol;
+        const price = isCrypto ? stock.regularMarketPrice : stock.regularMarketPrice;
+        const changePct = isCrypto ? stock.regularMarketChangePercent : stock.regularMarketChangePercent;
+        const changeAbs = isCrypto ? Math.abs(stock.regularMarketChange) : Math.abs(stock.regularMarketChange);
+        const openPrice = isCrypto ? stock.regularMarketPrice : (stock.regularMarketOpen || stock.regularMarketPreviousClose);
+
+        const isUp = changePct >= 0;
+        const colorClass = isUp ? 'up' : 'down';
+        
         const googleLink = isCrypto 
-            ? `https://www.google.com/finance/quote/${stock.symbol.replace('BRL', '')}-BRL`
-            : `https://www.google.com/finance/quote/${stock.symbol}:BVMF`;
+            ? `https://www.google.com/finance/quote/${symbol}-BRL`
+            : `https://www.google.com/finance/quote/${symbol}:BVMF`;
 
         const html = `
             <div style="display:flex; flex-direction:column; align-items:center;">
-                <a href="${googleLink}" target="_blank" class="ticker-link">${stock.symbol}</a>
+                <a href="${googleLink}" target="_blank" class="ticker-link">${symbol}</a>
                 <span class="name">${fullName}</span>
             </div>
             <div style="display:flex; flex-direction:column; align-items:center;">
-                <span class="price">R$ ${stock.regularMarketPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
-                <span class="variation ${colorClass}">${sign}${stock.regularMarketChangePercent.toFixed(2)}% | R$ ${changeAbs}</span>
+                <span class="price">R$ ${price.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                <span class="variation ${colorClass}">${isUp ? '+' : ''}${changePct.toFixed(2)}% | R$ ${changeAbs.toFixed(2)}</span>
             </div>
             <div class="info-footer">
-                <span class="info-label">${isCrypto ? 'Fechamento 24h' : 'Abertura'}</span>
-                <span class="info-value">R$ ${open.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
+                <span class="info-label">${isCrypto ? 'Últimas 24h' : 'Abertura'}</span>
+                <span class="info-value">R$ ${openPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
             </div>
         `;
 
         if (!card) {
             card = document.createElement('div');
-            card.id = `card-${stock.symbol}`;
+            card.id = cardId;
             card.className = 'card';
             grid.appendChild(card);
         }
@@ -227,13 +230,11 @@
         const now = new Date();
         const day = now.getDay();
         const hour = now.getHours();
-        const isWeekday = day >= 1 && day <= 5;
-        const isTradingHours = hour >= 10 && hour < 18;
-        const isOpen = isWeekday && isTradingHours;
+        const isOpen = (day >= 1 && day <= 5) && (hour >= 10 && hour < 18);
 
         document.getElementById('marketStatus').innerHTML = `
             <div class="dot ${isOpen ? 'dot-green' : 'dot-red'}"></div>
-            MERCADO B3 ${isOpen ? 'ABERTO' : 'FECHADO'} | CRIPTO 24/7 | ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+            MERCADO B3 ${isOpen ? 'ABERTO' : 'FECHADO'} | CRIPTO 24/7 | ${now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
         `;
     }
 
