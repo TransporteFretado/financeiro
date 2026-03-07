@@ -3,86 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GTB Terminal | Estratégico</title>
+    <title>Dash Estratégico</title>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #0b0e11; --card-bg: #161a1e; --text-main: #e3e6e8;
             --text-muted: #707a8a; --border: #2b3139; --success: #00f2a1; --danger: #ff4d6d; --warning: #ffb800;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text-main); padding-bottom: 80px; }
-
-        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 15px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text-main); padding-bottom: 70px; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px 10px; }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-size: 1.6rem; font-weight: 900; text-transform: uppercase; }
         
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; }
-
-        .btn-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
-        .btn {
-            background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border);
-            padding: 8px 16px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; cursor: pointer;
-        }
+        .btn-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; }
+        .btn { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border); padding: 10px 20px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; cursor: pointer; }
 
         .sector-section { margin-bottom: 15px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .sector-header { padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(255,255,255,0.03); }
-        .sector-title { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+        .sector-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(255,255,255,0.03); }
+        .sector-title { font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
 
-        /* Grid Responsivo */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; padding: 10px; background: var(--bg); display: none; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; padding: 12px; background: var(--bg); display: none; }
         .expanded .grid { display: grid; }
 
-        /* Cards */
-        .card { 
-            background: var(--card-bg); padding: 15px; border-radius: 10px;
-            display: flex; flex-direction: column; align-items: center; position: relative; 
-            border: 1px solid var(--border); text-align: center; min-height: 180px;
-        }
-        .card.opportunity { border: 1.5px solid var(--success); box-shadow: 0 0 10px rgba(0, 242, 161, 0.15); }
+        .card { background: var(--card-bg); padding: 20px 15px; border-radius: 10px; border: 1px solid var(--border); text-align: center; display: flex; flex-direction: column; align-items: center; transition: 0.3s; }
+        .card.opportunity { border: 1.5px solid var(--success); box-shadow: 0 0 10px rgba(0, 242, 161, 0.1); }
 
         .buy-label { font-size: 0.55rem; font-weight: 800; color: var(--success); margin-bottom: 8px; animation: blink 1.5s infinite; }
         @keyframes blink { 50% { opacity: 0.2; } }
 
-        .ticker-link { font-size: 1.2rem; font-weight: 800; color: #3b82f6; text-decoration: none; margin-bottom: 2px; }
-        .asset-name { font-size: 0.6rem; color: var(--text-muted); margin-bottom: 10px; font-weight: 600; }
-        
+        .ticker-link { font-size: 1.2rem; font-weight: 800; color: #3b82f6; text-decoration: none; display: block; }
+        .asset-name { font-size: 0.6rem; color: var(--text-muted); margin-bottom: 12px; }
         .price { font-size: 1.5rem; font-weight: 800; margin-bottom: 5px; }
-        .var-box { font-size: 0.8rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; }
+        
+        .var-box { font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 4px; }
         .up { color: var(--success); background: rgba(0, 242, 161, 0.1); }
         .down { color: var(--danger); background: rgba(255, 77, 109, 0.1); }
 
-        /* Widget Cripto Limpo */
-        .crypto-widget { width: 100%; height: 100px; margin-top: 5px; }
+        .crypto-widget-container { width: 100%; height: 100px; margin-top: 10px; }
 
-        .info-footer { margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--border); width: 100%; display: flex; justify-content: center; gap: 5px; align-items: center; }
-        .info-label { font-size: 0.5rem; color: var(--text-muted); font-weight: 800; }
-        .info-value { font-size: 0.8rem; font-weight: 800; color: var(--warning); }
+        .info-footer { margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border); width: 100%; }
+        .info-label { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; }
+        .info-value { font-size: 0.9rem; font-weight: 700; color: var(--warning); }
 
-        /* Status Rodapé */
-        .market-footer {
-            position: fixed; bottom: 0; left: 0; right: 0; height: 50px;
-            background: #161a1e; border-top: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            z-index: 9999; font-size: 0.65rem; font-weight: 800;
-        }
+        .market-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 50px; background: #1a1e23; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 10px; z-index: 9999; font-size: 0.7rem; font-weight: 800; }
         .status-dot { width: 10px; height: 10px; border-radius: 50%; }
         .dot-open { background: var(--success); box-shadow: 0 0 8px var(--success); }
         .dot-closed { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
 
-        @media (max-width: 480px) {
-            .grid { grid-template-columns: 1fr 1fr; gap: 8px; padding: 5px; }
-            .card { padding: 10px 5px; min-height: 160px; }
-            .ticker-link { font-size: 0.9rem; }
-            .price { font-size: 1.1rem; }
-            .crypto-widget { height: 80px; }
-        }
+        @media (max-width: 480px) { .grid { grid-template-columns: 1fr 1fr; } .card { padding: 15px 5px; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header"><h1>GTB TERMINAL</h1></div>
+    <div class="header"><h1>Dash Estratégico</h1></div>
     <div class="btn-container">
         <button class="btn" onclick="toggleAll(true)">EXPANDIR TUDO</button>
         <button class="btn" onclick="toggleAll(false)">RECOLHER TUDO</button>
@@ -92,7 +67,7 @@
 
 <div class="market-footer">
     <div id="dot" class="status-dot"></div>
-    <span id="statusText">SINCRONIZANDO B3...</span>
+    <span id="statusText">SINCRONIZANDO...</span>
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
@@ -101,62 +76,59 @@
     const config = { "BBAS3": 30.00, "ITUB4": 45.00, "KLBN11": 22.00, "MXRF11": 10.50 };
 
     const sectors = {
-        "Criptomoedas": { "BTCBRL": "Bitcoin", "ETHBRL": "Ethereum", "SOLBRL": "Solana", "BNBBRL": "Binance" },
-        "Bancos & Seguros": { "BBAS3": "Banco do Brasil", "BBDC4": "Bradesco", "ITUB4": "Itaú", "CXSE3": "Caixa", "BBSE3": "BB Seguridade" },
+        "Criptomoedas": { "BTCBRL": "Bitcoin", "ETHBRL": "Ethereum", "SOLBRL": "Solana", "BNBBRL": "Binance Coin" },
+        "Bancos & Seguros": { "BBAS3": "Banco do Brasil", "BBDC4": "Bradesco", "ITUB4": "Itaú", "CXSE3": "Caixa Seguridade", "BBSE3": "BB Seguridade" },
         "FIIs": { "MXRF11": "Maxi Renda", "HGLG11": "CSHG Logística", "XPLG11": "XP Log" },
         "Papel & Indústria": { "KLBN11": "Klabin", "WEGE3": "WEG S.A" }
     };
 
-    function updateMarket() {
+    function updateMarketStatus() {
         const now = new Date();
         const isOpen = (now.getDay() >= 1 && now.getDay() <= 5) && (now.getHours() >= 10 && now.getHours() < 18);
         document.getElementById('dot').className = `status-dot ${isOpen ? 'dot-open' : 'dot-closed'}`;
         document.getElementById('statusText').innerText = `MERCADO B3 ${isOpen ? 'ABERTO' : 'FECHADO'} - ${now.toLocaleTimeString('pt-BR')}`;
     }
 
-    function createLayout() {
+    async function init() {
         const container = document.getElementById('dashboard-content');
         for (const [name, list] of Object.entries(sectors)) {
             const id = name.replace(/\s/g, '');
-            container.innerHTML += `
+            const sectorHtml = `
                 <div class="sector-section" id="sec-${id}">
                     <div class="sector-header" onclick="toggleSector('${id}')">
-                        <span class="sector-title">${name}</span>
+                        <span class="sector-title">${name} (${Object.keys(list).length})</span>
                         <span>▼</span>
                     </div>
                     <div class="grid" id="grid-${id}"></div>
                 </div>`;
-        }
-    }
-
-    async function loadData() {
-        for (const [sector, list] of Object.entries(sectors)) {
-            const grid = document.getElementById(`grid-${sector.replace(/\s/g, '')}`);
+            container.innerHTML += sectorHtml;
+            
+            const grid = document.getElementById(`grid-${id}`);
             for (const ticker in list) {
-                if (sector === "Criptomoedas") {
+                if (name === "Criptomoedas") {
                     renderCrypto(grid, ticker, list[ticker]);
                 } else {
-                    renderStock(grid, ticker, list[ticker]);
+                    await renderStock(grid, ticker, list[ticker]);
                 }
             }
         }
     }
 
     function renderCrypto(grid, ticker, name) {
-        const divId = `chart_${ticker}`;
+        const divId = `tv_${ticker}`;
         grid.innerHTML += `
             <div class="card">
                 <a href="https://www.google.com/finance/quote/${ticker.replace('BRL','')}-BRL" target="_blank" class="ticker-link">${ticker}</a>
                 <span class="asset-name">${name}</span>
-                <div id="${divId}" class="crypto-widget"></div>
+                <div id="${divId}" class="crypto-widget-container"></div>
             </div>`;
-        
-        new TradingView.MiniChart({
-            "container_id": divId, "symbol": `BINANCE:${ticker}`,
-            "width": "100%", "height": "100%", "locale": "br",
-            "dateRange": "12M", "colorTheme": "dark", "trendLineColor": "#3b82f6",
-            "underLineColor": "rgba(59, 130, 246, 0.15)", "isTransparent": true, "autosize": true
-        });
+        setTimeout(() => {
+            new TradingView.MiniChart({
+                "container_id": divId, "symbol": `BINANCE:${ticker}`,
+                "width": "100%", "height": "100%", "locale": "br", "dateRange": "1D",
+                "colorTheme": "dark", "trendLineColor": "#3b82f6", "isTransparent": true, "autosize": true
+            });
+        }, 100);
     }
 
     async function renderStock(grid, ticker, name) {
@@ -173,24 +145,22 @@
                     <a href="https://www.google.com/finance/quote/${ticker}:BVMF" target="_blank" class="ticker-link">${ticker}</a>
                     <span class="asset-name">${name}</span>
                     <span class="price">R$ ${asset.regularMarketPrice.toLocaleString('pt-BR', {minimumFractionDigits:2})}</span>
-                    <span class="var-box ${asset.regularMarketChangePercent >= 0 ? 'up':'down'}">
+                    <span class="var-box ${asset.regularMarketChangePercent >= 0 ? 'up' : 'down'}">
                         ${asset.regularMarketChangePercent.toFixed(2)}%
                     </span>
                     <div class="info-footer">
-                        <span class="info-label">TETO:</span>
-                        <span class="info-value">R$ ${teto > 0 ? teto.toFixed(2) : '--'}</span>
+                        <span class="info-label">Preço Teto</span>
+                        <span class="info-value">${teto > 0 ? 'R$ '+teto.toFixed(2) : '---'}</span>
                     </div>
                 </div>`;
-        } catch (e) {}
+        } catch (e) { console.error("Erro ao carregar " + ticker); }
     }
 
     function toggleSector(id) { document.getElementById(`sec-${id}`).classList.toggle('expanded'); }
     function toggleAll(expand) { document.querySelectorAll('.sector-section').forEach(s => expand ? s.classList.add('expanded') : s.classList.remove('expanded')); }
 
-    createLayout();
-    loadData();
-    setInterval(updateMarket, 1000);
-    updateMarket();
+    init();
+    setInterval(updateMarketStatus, 1000);
 </script>
 </body>
 </html>
