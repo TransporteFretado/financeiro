@@ -11,71 +11,85 @@
             --text-muted: #707a8a; --border: #2b3139; --accent: #ffffff;
             --success: #00f2a1; --danger: #ff4d6d; --warning: #ffb800;
         }
-        [data-theme="light"] {
-            --bg: #f0f2f5; --card-bg: #ffffff; --text-main: #1a1e23;
-            --text-muted: #5f6673; --border: #dcdfe4; --accent: #1a1e23;
-        }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text-main); transition: 0.5s; overflow-x: hidden; }
+        body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text-main); overflow-x: hidden; }
 
+        /* Ticker Tape Superior */
         .ticker-wrap {
             width: 100%; background: var(--card-bg); border-bottom: 1px solid var(--border);
-            overflow: hidden; position: sticky; top: 0; z-index: 1000; padding: 12px 0;
+            overflow: hidden; position: sticky; top: 0; z-index: 1000; padding: 8px 0;
         }
-        .ticker-move { display: flex; white-space: nowrap; animation: tickerMove 35s linear infinite; width: fit-content; }
+        .ticker-move { display: flex; white-space: nowrap; animation: tickerMove 40s linear infinite; width: fit-content; }
         @keyframes tickerMove { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .ticker-item { padding: 0 40px; font-size: 0.75rem; font-weight: 800; border-right: 1px solid var(--border); }
+        .ticker-item { padding: 0 25px; font-size: 0.7rem; font-weight: 800; border-right: 1px solid var(--border); }
 
-        .container { display: flex; flex-direction: column; align-items: center; padding: 30px 10px; }
-        .header h1 { font-size: 2rem; font-weight: 900; }
-        .header p { font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; font-weight: 600; }
+        .container { display: flex; flex-direction: column; align-items: center; padding: 20px 10px; }
+        .header h1 { font-size: 1.6rem; font-weight: 900; }
+        .header p { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; font-weight: 600; }
 
-        .btn-container { display: flex; gap: 10px; margin: 25px 0; }
+        .btn-container { display: flex; gap: 8px; margin: 20px 0; }
         .btn {
             background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border);
-            padding: 10px 20px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; cursor: pointer;
+            padding: 8px 15px; border-radius: 6px; font-size: 0.6rem; font-weight: 800; cursor: pointer;
         }
 
-        .sector-section { width: 100%; max-width: 1100px; margin-bottom: 20px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .sector-header { padding: 18px 25px; display: flex; justify-content: space-between; cursor: pointer; align-items: center; background: rgba(0,0,0,0.1); border-bottom: 1px solid var(--border); }
-        .sector-title { font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+        .sector-section { width: 100%; max-width: 1100px; margin-bottom: 15px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+        .sector-header { padding: 15px 20px; display: flex; justify-content: space-between; cursor: pointer; align-items: center; background: rgba(0,0,0,0.2); }
+        .sector-title { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
 
-        /* Grid com separação visível entre blocos */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; padding: 15px; background: var(--bg); display: none; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+            gap: 12px; padding: 12px; background: var(--bg); 
+            display: none; 
+        }
         .expanded .grid { display: grid; }
 
-        /* Card Layout */
+        /* Card Estilo Google Finance */
         .card { 
-            background: var(--card-bg); padding: 30px 15px; border-radius: 10px;
+            background: var(--card-bg); padding: 20px 15px; border-radius: 8px;
             display: flex; flex-direction: column; align-items: center; position: relative; 
-            border: 1px solid var(--border);
+            border: 1px solid var(--border); transition: 0.3s;
         }
-        
-        /* Borda na cor do nome OPORTUNIDADE DE COMPRA */
-        .card.opportunity { border: 1px solid var(--success); box-shadow: 0 0 10px rgba(0, 242, 161, 0.1); }
+        .card.opportunity { border: 1px solid var(--success); box-shadow: 0 0 8px rgba(0, 242, 161, 0.1); }
 
         .buy-label { 
-            font-size: 0.55rem; font-weight: 800; color: var(--success); 
-            letter-spacing: 1px; margin-bottom: 6px; 
-            animation: blink 1.5s step-end infinite;
+            font-size: 0.5rem; font-weight: 800; color: var(--success); 
+            letter-spacing: 1px; margin-bottom: 5px; animation: blink 1.5s step-end infinite;
         }
         @keyframes blink { 50% { opacity: 0; } }
 
-        .ticker-link { font-size: 1.3rem; font-weight: 800; color: #3b82f6; text-decoration: none; }
-        .price { font-size: 1.9rem; font-weight: 800; margin: 10px 0; }
-        .var-box { font-size: 0.85rem; font-weight: 700; }
+        .ticker-link { font-size: 1.1rem; font-weight: 800; color: #3b82f6; text-decoration: none; }
+        .asset-name { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .price { font-size: 1.6rem; font-weight: 800; margin: 5px 0; }
+        
+        /* Variação colorida conforme Google Finance */
+        .var-box { 
+            font-size: 0.8rem; font-weight: 700; padding: 4px 8px; border-radius: 4px;
+        }
         .up { color: var(--success); } .down { color: var(--danger); }
+        .bg-up { background: rgba(0, 242, 161, 0.1); }
+        .bg-down { background: rgba(255, 77, 109, 0.1); }
 
         .info-footer { margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border); width: 100%; text-align: center; }
-        .info-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; display: block; }
-        .info-value { font-size: 0.9rem; font-weight: 700; color: var(--warning); }
+        .info-label { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; display: block; }
+        .info-value { font-size: 0.85rem; font-weight: 700; color: var(--warning); }
+
+        /* Responsividade Mobile */
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; gap: 10px; }
+            .price { font-size: 1.4rem; }
+            .ticker-link { font-size: 1rem; }
+            .header h1 { font-size: 1.3rem; }
+            .card { padding: 15px 10px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="ticker-wrap">
-    <div class="ticker-move" id="tickerTape">Carregando índices globais...</div>
+    <div class="ticker-move" id="tickerTape">Carregando mercado...</div>
 </div>
 
 <div class="container">
@@ -94,6 +108,8 @@
 
 <script>
     const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
+    
+    // Configurações de Preço Teto
     const config = { "BBAS3": 30.00, "ITUB4": 45.00, "KLBN11": 22.00, "MXRF11": 10.50 };
 
     const sectors = {
@@ -102,6 +118,16 @@
         "FIIs": { "MXRF11": "Maxi Renda", "HGLG11": "CSHG Logística", "XPLG11": "XP Log" },
         "Papel & Indústria": { "KLBN11": "Klabin", "WEGE3": "WEG S.A" }
     };
+
+    async function fetchAssetData(ticker, isCrypto) {
+        try {
+            // Ajuste para cripto usar o par BRL se necessário na API
+            const symbol = isCrypto ? `${ticker}` : ticker;
+            const res = await fetch(`https://brapi.dev/api/quote/${symbol}?token=${API_TOKEN}`);
+            const data = await res.json();
+            return data.results[0];
+        } catch (e) { return null; }
+    }
 
     async function loadTicker() {
         try {
@@ -139,34 +165,42 @@
         for (const [sector, list] of Object.entries(sectors)) {
             const gridId = sector.replace(/[^a-zA-Z]/g, '');
             const grid = document.getElementById(`grid-${gridId}`);
+            const isCrypto = sector === "Criptomoedas";
             
             for (const ticker in list) {
-                try {
-                    // Para criptos usamos uma busca diferente ou adaptamos o ticker
-                    const queryTicker = sector === "Criptomoedas" ? ticker : ticker;
-                    const res = await fetch(`https://brapi.dev/api/quote/${queryTicker}?token=${API_TOKEN}`);
-                    const data = await res.json();
-                    const asset = data.results[0];
+                const asset = await fetchAssetData(ticker, isCrypto);
+                
+                if (asset) {
+                    const teto = config[ticker] || 0;
+                    const isOpp = teto > 0 && asset.regularMarketPrice <= teto;
+                    const isUp = asset.regularMarketChangePercent >= 0;
                     
-                    if (asset) {
-                        const teto = config[ticker] || 0;
-                        const isOpp = teto > 0 && asset.regularMarketPrice <= teto;
-                        const isUp = asset.regularMarketChangePercent >= 0;
-                        const googleUrl = sector === "Criptomoedas" ? `https://www.google.com/finance/quote/${ticker}-BRL` : `https://www.google.com/finance/quote/${ticker}:BVMF`;
+                    // Link Google Finance (ajustado para cripto e B3)
+                    const googleUrl = isCrypto ? 
+                        `https://www.google.com/finance/quote/${ticker}-BRL` : 
+                        `https://www.google.com/finance/quote/${ticker}:BVMF`;
 
-                        grid.innerHTML += `
-                            <div class="card ${isOpp ? 'opportunity' : ''}">
-                                ${isOpp ? '<span class="buy-label">OPORTUNIDADE DE COMPRA</span>' : ''}
-                                <a href="${googleUrl}" target="_blank" class="ticker-link">${ticker}</a>
-                                <span style="font-size:0.55rem; color:var(--text-muted); text-transform:uppercase">${list[ticker]}</span>
-                                <span class="price">${sector === "Criptomoedas" ? '' : 'R$ '}${asset.regularMarketPrice.toLocaleString('pt-BR', {minimumFractionDigits: sector === "Criptomoedas" ? 0 : 2})}</span>
-                                <span class="var-box ${isUp?'up':'down'}">
-                                    ${isUp?'+':''}${asset.regularMarketChangePercent.toFixed(2)}% | R$ ${Math.abs(asset.regularMarketChange).toFixed(2)}
-                                </span>
-                                ${sector !== "Criptomoedas" ? `<div class="info-footer"><span class="info-label">Preço Teto</span><span class="info-value">R$ ${teto > 0 ? teto.toFixed(2) : '---'}</span></div>` : ''}
-                            </div>`;
-                    }
-                } catch (e) {}
+                    grid.innerHTML += `
+                        <div class="card ${isOpp ? 'opportunity' : ''}">
+                            ${isOpp ? '<span class="buy-label">OPORTUNIDADE DE COMPRA</span>' : ''}
+                            <a href="${googleUrl}" target="_blank" class="ticker-link">${ticker}</a>
+                            <span class="asset-name">${list[ticker]}</span>
+                            
+                            <span class="price">
+                                ${isCrypto ? '' : 'R$ '}${asset.regularMarketPrice.toLocaleString('pt-BR', {minimumFractionDigits: isCrypto ? 0 : 2})}
+                            </span>
+                            
+                            <span class="var-box ${isUp?'up bg-up':'down bg-down'}">
+                                ${isUp?'+':''}${asset.regularMarketChangePercent.toFixed(2)}% | ${isCrypto ? '' : 'R$ '}${Math.abs(asset.regularMarketChange).toFixed(2)}
+                            </span>
+
+                            ${!isCrypto ? `
+                                <div class="info-footer">
+                                    <span class="info-label">Preço Teto</span>
+                                    <span class="info-value">R$ ${teto > 0 ? teto.toFixed(2) : '---'}</span>
+                                </div>` : ''}
+                        </div>`;
+                }
             }
         }
     }
