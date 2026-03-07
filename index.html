@@ -8,30 +8,20 @@
     <style>
         :root {
             --bg: #0b0e11; --card-bg: #161a1e; --text-main: #e3e6e8;
-            --text-muted: #707a8a; --border: #2b3139; --accent: #ffffff;
-            --success: #00f2a1; --danger: #ff4d6d; --warning: #ffb800;
+            --text-muted: #707a8a; --border: #2b3139; --success: #00f2a1; --danger: #ff4d6d; --warning: #ffb800;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text-main); overflow-x: hidden; }
 
-        /* Ticker Tape Superior */
-        .ticker-wrap {
-            width: 100%; background: var(--card-bg); border-bottom: 1px solid var(--border);
-            overflow: hidden; position: sticky; top: 0; z-index: 1000; padding: 8px 0;
-        }
-        .ticker-move { display: flex; white-space: nowrap; animation: tickerMove 40s linear infinite; width: fit-content; }
-        @keyframes tickerMove { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .ticker-item { padding: 0 25px; font-size: 0.7rem; font-weight: 800; border-right: 1px solid var(--border); }
-
         .container { display: flex; flex-direction: column; align-items: center; padding: 20px 10px; }
-        .header h1 { font-size: 1.6rem; font-weight: 900; }
-        .header p { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; font-weight: 600; }
+        .header h1 { font-size: 1.6rem; font-weight: 900; text-align: center; }
+        .header p { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; font-weight: 600; text-align: center; }
 
         .btn-container { display: flex; gap: 8px; margin: 20px 0; }
         .btn {
             background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border);
-            padding: 8px 15px; border-radius: 6px; font-size: 0.6rem; font-weight: 800; cursor: pointer;
+            padding: 8px 15px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; cursor: pointer;
         }
 
         .sector-section { width: 100%; max-width: 1100px; margin-bottom: 15px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
@@ -46,54 +36,46 @@
         }
         .expanded .grid { display: grid; }
 
-        /* Card Estilo Google Finance */
         .card { 
             background: var(--card-bg); padding: 20px 15px; border-radius: 8px;
             display: flex; flex-direction: column; align-items: center; position: relative; 
             border: 1px solid var(--border); transition: 0.3s;
         }
-        .card.opportunity { border: 1px solid var(--success); box-shadow: 0 0 8px rgba(0, 242, 161, 0.1); }
+        .card.opportunity { border: 1px solid var(--success); box-shadow: 0 0 10px rgba(0, 242, 161, 0.15); }
 
         .buy-label { 
-            font-size: 0.5rem; font-weight: 800; color: var(--success); 
+            font-size: 0.55rem; font-weight: 800; color: var(--success); 
             letter-spacing: 1px; margin-bottom: 5px; animation: blink 1.5s step-end infinite;
         }
         @keyframes blink { 50% { opacity: 0; } }
 
-        .ticker-link { font-size: 1.1rem; font-weight: 800; color: #3b82f6; text-decoration: none; }
-        .asset-name { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
-        .price { font-size: 1.6rem; font-weight: 800; margin: 5px 0; }
+        .ticker-link { font-size: 1.2rem; font-weight: 800; color: #3b82f6; text-decoration: none; margin-bottom: 2px; }
+        .asset-name { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; }
         
-        /* Variação colorida conforme Google Finance */
+        /* Valor formatado R$ XXX.XXX,XX */
+        .price { font-size: 1.5rem; font-weight: 800; margin: 5px 0; white-space: nowrap; }
+        
         .var-box { 
-            font-size: 0.8rem; font-weight: 700; padding: 4px 8px; border-radius: 4px;
+            font-size: 0.8rem; font-weight: 700; padding: 5px 10px; border-radius: 4px; margin-top: 5px;
         }
-        .up { color: var(--success); } .down { color: var(--danger); }
-        .bg-up { background: rgba(0, 242, 161, 0.1); }
-        .bg-down { background: rgba(255, 77, 109, 0.1); }
+        .up { color: var(--success); background: rgba(0, 242, 161, 0.1); }
+        .down { color: var(--danger); background: rgba(255, 77, 109, 0.1); }
 
         .info-footer { margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border); width: 100%; text-align: center; }
         .info-label { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; display: block; }
         .info-value { font-size: 0.85rem; font-weight: 700; color: var(--warning); }
 
-        /* Responsividade Mobile */
+        /* Mobile Responsiveness */
         @media (max-width: 600px) {
-            .grid { grid-template-columns: 1fr; gap: 10px; }
+            .grid { grid-template-columns: 1fr; }
             .price { font-size: 1.4rem; }
-            .ticker-link { font-size: 1rem; }
-            .header h1 { font-size: 1.3rem; }
-            .card { padding: 15px 10px; }
         }
     </style>
 </head>
 <body>
 
-<div class="ticker-wrap">
-    <div class="ticker-move" id="tickerTape">Carregando mercado...</div>
-</div>
-
 <div class="container">
-    <div class="header" style="text-align: center;">
+    <div class="header">
         <h1>GTB TERMINAL</h1>
         <p>Dashboard Estratégico 📈</p>
     </div>
@@ -107,41 +89,18 @@
 </div>
 
 <script>
-    const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
-    
-    // Configurações de Preço Teto
+    const API_TOKEN_BRAPI = 'nctccHqqPkRvTdxGsZeK2f';
     const config = { "BBAS3": 30.00, "ITUB4": 45.00, "KLBN11": 22.00, "MXRF11": 10.50 };
 
     const sectors = {
-        "Criptomoedas": { "BTC": "Bitcoin", "ETH": "Ethereum", "SOL": "Solana", "BNB": "Binance Coin" },
+        "Criptomoedas": { "BTCBRL": "Bitcoin", "ETHBRL": "Ethereum", "SOLBRL": "Solana", "BNBBRL": "Binance Coin" },
         "Bancos & Seguros": { "BBAS3": "Banco do Brasil", "BBDC4": "Bradesco", "ITUB4": "Itaú", "CXSE3": "Caixa", "BBSE3": "BB Seguridade" },
         "FIIs": { "MXRF11": "Maxi Renda", "HGLG11": "CSHG Logística", "XPLG11": "XP Log" },
         "Papel & Indústria": { "KLBN11": "Klabin", "WEGE3": "WEG S.A" }
     };
 
-    async function fetchAssetData(ticker, isCrypto) {
-        try {
-            // Ajuste para cripto usar o par BRL se necessário na API
-            const symbol = isCrypto ? `${ticker}` : ticker;
-            const res = await fetch(`https://brapi.dev/api/quote/${symbol}?token=${API_TOKEN}`);
-            const data = await res.json();
-            return data.results[0];
-        } catch (e) { return null; }
-    }
-
-    async function loadTicker() {
-        try {
-            const res = await fetch(`https://brapi.dev/api/quote/^BVSP,IFIX.SA,USDBRL,^GSPC?token=${API_TOKEN}`);
-            const data = await res.json();
-            const tape = document.getElementById('tickerTape');
-            let html = '';
-            data.results.forEach(idx => {
-                const names = {"^BVSP":"IBOVESPA", "IFIX.SA":"IFIX", "USDBRL":"DÓLAR", "^GSPC":"S&P 500"};
-                const isUp = idx.regularMarketChangePercent >= 0;
-                html += `<div class="ticker-item">${names[idx.symbol]} <span style="color:var(--accent)">${idx.regularMarketPrice.toLocaleString('pt-BR')}</span> <span class="${isUp?'up':'down'}">${isUp?'+':''}${idx.regularMarketChangePercent.toFixed(2)}%</span></div>`;
-            });
-            tape.innerHTML = html + html;
-        } catch (e) {}
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
     }
 
     function createStructure() {
@@ -149,11 +108,10 @@
         container.innerHTML = '';
         for (const [name, list] of Object.entries(sectors)) {
             const id = name.replace(/[^a-zA-Z]/g, '');
-            const count = Object.keys(list).length;
             container.innerHTML += `
                 <div class="sector-section" id="sec-${id}">
                     <div class="sector-header" onclick="toggleSector('${id}')">
-                        <span class="sector-title">${name} (${count})</span>
+                        <span class="sector-title">${name} (${Object.keys(list).length})</span>
                         <span>▼</span>
                     </div>
                     <div class="grid" id="grid-${id}"></div>
@@ -161,46 +119,78 @@
         }
     }
 
-    async function loadAssets() {
+    // Lógica para Criptomoedas (Tempo Real via Binance)
+    async function loadCryptos() {
+        const grid = document.getElementById('grid-Criptomoedas');
+        grid.innerHTML = '';
+        const pairs = Object.keys(sectors.Criptomoedas);
+
+        for (const pair of pairs) {
+            const tickerHtml = `
+                <div class="card" id="card-${pair}">
+                    <a href="https://www.google.com/finance/quote/${pair.replace('BRL', '-BRL')}" target="_blank" class="ticker-link">${pair}</a>
+                    <span class="asset-name">${sectors.Criptomoedas[pair]}</span>
+                    <span class="price" id="price-${pair}">Carregando...</span>
+                    <span class="var-box" id="var-${pair}">--% | --</span>
+                </div>`;
+            grid.innerHTML += tickerHtml;
+        }
+
+        // Atualização contínua
+        const updatePrice = async () => {
+            for (const pair of pairs) {
+                try {
+                    const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${pair}`);
+                    const data = await res.json();
+                    const priceEl = document.getElementById(`price-${pair}`);
+                    const varEl = document.getElementById(`var-${pair}`);
+                    
+                    const price = parseFloat(data.lastPrice);
+                    const percent = parseFloat(data.priceChangePercent);
+                    const change = parseFloat(data.priceChange);
+
+                    priceEl.innerText = formatCurrency(price);
+                    varEl.innerText = `${percent >= 0 ? '+' : ''}${percent.toFixed(2)}% | ${formatCurrency(Math.abs(change))}`;
+                    varEl.className = `var-box ${percent >= 0 ? 'up' : 'down'}`;
+                } catch (e) { console.error("Erro na Binance API", e); }
+            }
+        };
+        updatePrice();
+        setInterval(updatePrice, 5000); // Atualiza a cada 5 segundos
+    }
+
+    // Lógica para Ações e FIIs (BRAPI)
+    async function loadStocks() {
         for (const [sector, list] of Object.entries(sectors)) {
-            const gridId = sector.replace(/[^a-zA-Z]/g, '');
-            const grid = document.getElementById(`grid-${gridId}`);
-            const isCrypto = sector === "Criptomoedas";
+            if (sector === "Criptomoedas") continue;
+            const grid = document.getElementById(`grid-${sector.replace(/[^a-zA-Z]/g, '')}`);
             
             for (const ticker in list) {
-                const asset = await fetchAssetData(ticker, isCrypto);
-                
-                if (asset) {
+                try {
+                    const res = await fetch(`https://brapi.dev/api/quote/${ticker}?token=${API_TOKEN_BRAPI}`);
+                    const data = await res.json();
+                    const asset = data.results[0];
+                    if (!asset) continue;
+
                     const teto = config[ticker] || 0;
                     const isOpp = teto > 0 && asset.regularMarketPrice <= teto;
                     const isUp = asset.regularMarketChangePercent >= 0;
-                    
-                    // Link Google Finance (ajustado para cripto e B3)
-                    const googleUrl = isCrypto ? 
-                        `https://www.google.com/finance/quote/${ticker}-BRL` : 
-                        `https://www.google.com/finance/quote/${ticker}:BVMF`;
 
                     grid.innerHTML += `
                         <div class="card ${isOpp ? 'opportunity' : ''}">
                             ${isOpp ? '<span class="buy-label">OPORTUNIDADE DE COMPRA</span>' : ''}
-                            <a href="${googleUrl}" target="_blank" class="ticker-link">${ticker}</a>
+                            <a href="https://www.google.com/finance/quote/${ticker}:BVMF" target="_blank" class="ticker-link">${ticker}</a>
                             <span class="asset-name">${list[ticker]}</span>
-                            
-                            <span class="price">
-                                ${isCrypto ? '' : 'R$ '}${asset.regularMarketPrice.toLocaleString('pt-BR', {minimumFractionDigits: isCrypto ? 0 : 2})}
+                            <span class="price">${formatCurrency(asset.regularMarketPrice)}</span>
+                            <span class="var-box ${isUp?'up':'down'}">
+                                ${isUp?'+':''}${asset.regularMarketChangePercent.toFixed(2)}% | ${formatCurrency(Math.abs(asset.regularMarketChange))}
                             </span>
-                            
-                            <span class="var-box ${isUp?'up bg-up':'down bg-down'}">
-                                ${isUp?'+':''}${asset.regularMarketChangePercent.toFixed(2)}% | ${isCrypto ? '' : 'R$ '}${Math.abs(asset.regularMarketChange).toFixed(2)}
-                            </span>
-
-                            ${!isCrypto ? `
-                                <div class="info-footer">
-                                    <span class="info-label">Preço Teto</span>
-                                    <span class="info-value">R$ ${teto > 0 ? teto.toFixed(2) : '---'}</span>
-                                </div>` : ''}
+                            <div class="info-footer">
+                                <span class="info-label">Preço Teto</span>
+                                <span class="info-value">${teto > 0 ? formatCurrency(teto) : '---'}</span>
+                            </div>
                         </div>`;
-                }
+                } catch (e) { console.error("Erro na BRAPI", e); }
             }
         }
     }
@@ -209,9 +199,8 @@
     function toggleAll(expand) { document.querySelectorAll('.sector-section').forEach(s => expand ? s.classList.add('expanded') : s.classList.remove('expanded')); }
 
     createStructure();
-    loadTicker();
-    loadAssets();
-    setInterval(loadTicker, 30000);
+    loadCryptos();
+    loadStocks();
 </script>
 </body>
 </html>
