@@ -18,7 +18,7 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text-main); padding-bottom: 90px; transition: background 0.3s; }
+        body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text-main); padding-bottom: 110px; transition: background 0.3s; }
         
         .ticker-header-group { 
             position: sticky; top: 0; z-index: 1000; 
@@ -42,7 +42,7 @@
         .grid { display: none; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; padding: 8px; background: var(--bg); }
         .expanded .grid { display: grid; }
 
-        .card { background: var(--card-bg); padding: 12px 8px; border-radius: 8px; border: 1px solid var(--border); text-align: center; display: flex; flex-direction: column; align-items: center; min-height: 140px; }
+        .card { background: var(--card-bg); padding: 12px 8px; border-radius: 8px; border: 1px solid var(--border); text-align: center; display: flex; flex-direction: column; align-items: center; min-height: 160px; position: relative; }
         
         .card.opportunity { animation: pulse-border 2s infinite; }
         @keyframes pulse-border {
@@ -51,6 +51,7 @@
         }
 
         .buy-label { font-size: 0.45rem; font-weight: 800; color: var(--success); margin-bottom: 4px; animation: blink 1s infinite; }
+        .margin-tag { font-size: 0.45rem; color: var(--success); font-weight: 800; margin-left: 4px; }
         @keyframes blink { 50% { opacity: 0.2; } }
         
         .ticker-link { font-size: 0.85rem; font-weight: 800; color: var(--accent); text-decoration: none; margin-bottom: 1px; }
@@ -60,13 +61,18 @@
         .variation-row { font-size: 0.65rem; font-weight: 700; display: flex; gap: 5px; align-items: center; margin-bottom: 8px; }
         .up { color: var(--success); } .down { color: var(--danger); }
 
-        .info-footer { margin-top: auto; padding-top: 6px; border-top: 1px solid var(--border); width: 100%; }
+        .info-footer { margin-top: auto; padding-top: 6px; border-top: 1px solid var(--border); width: 100%; display: flex; flex-direction: column; gap: 2px; }
+        .info-line { display: flex; justify-content: space-between; width: 100%; }
         .info-label { font-size: 0.45rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-        .info-value { font-size: 0.75rem; font-weight: 800; color: var(--warning); }
+        .info-value { font-size: 0.65rem; font-weight: 800; color: var(--warning); }
+        .graham-value { color: var(--accent); }
 
-        .market-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--card-bg); border-top: 2px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
+        /* Barra de Medo e Ganância */
+        .market-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 95px; background: var(--card-bg); border-top: 2px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
         .news-link { color: var(--text-muted); text-decoration: none; font-size: 0.55rem; font-weight: 700; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .sentiment-container { width: 80%; max-width: 300px; height: 12px; background: #333; border-radius: 10px; margin: 8px 0; position: relative; overflow: hidden; }
+        .sentiment-bar { height: 100%; width: 50%; background: linear-gradient(90deg, var(--danger), var(--warning), var(--success)); transition: width 1s ease-in-out; }
+        .sentiment-label { font-size: 0.5rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
 
         @media (max-width: 600px) { 
             .grid { grid-template-columns: 1fr 1fr !important; } 
@@ -106,13 +112,19 @@
 </div>
 
 <div class="market-footer">
-    <div style="display: flex; gap: 10px; margin-bottom: 5px;">
+    <div style="display: flex; gap: 10px; margin-bottom: 2px;">
         <a href="https://g1.globo.com/economia/" target="_blank" class="news-link">► G1 ECONOMIA</a>
         <a href="https://br.investing.com/" target="_blank" class="news-link">► INVESTING</a>
         <a href="https://www.infomoney.com.br/" target="_blank" class="news-link">► INFOMONEY</a>
     </div>
+    
+    <div class="sentiment-label" id="sentimentText">SENTIMENTO: NEUTRO</div>
+    <div class="sentiment-container">
+        <div id="sentimentBar" class="sentiment-bar"></div>
+    </div>
+
     <div style="display: flex; gap: 6px; align-items: center;">
-        <div id="dot" class="status-dot"></div>
+        <div id="dot" class="status-dot" style="width: 8px; height: 8px; border-radius: 50%;"></div>
         <span id="statusText" style="font-size: 0.6rem; font-weight: 800;">CARREGANDO...</span>
     </div>
 </div>
@@ -120,7 +132,6 @@
 <script>
     const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
     
-    // Preços teto para alerta de oportunidade
     const config = { 
         "BBAS3": 28.00, "ITUB4": 32.00, "PETR4": 36.00, "VALE3": 62.00, 
         "MXRF11": 10.10, "BBDC4": 14.50, "SBSP3": 75.00 
@@ -138,76 +149,89 @@
 
     function applyTheme() {
         const hour = new Date().getHours();
-        // Tema claro das 06:00 às 17:59
-        if (hour >= 6 && hour < 18) {
-            document.getElementById('mainBody').setAttribute('data-theme', 'light');
-        } else {
-            document.getElementById('mainBody').removeAttribute('data-theme');
-        }
+        if (hour >= 6 && hour < 18) { document.getElementById('mainBody').setAttribute('data-theme', 'light'); }
+        else { document.getElementById('mainBody').removeAttribute('data-theme'); }
     }
 
-    function playAlert() {
-        try {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-        } catch(e) {}
+    // Cálculo simplificado de Graham: Raiz(22.5 * VPA * LPA)
+    function calcGraham(vpa, lpa) {
+        if (!vpa || !lpa || vpa <= 0 || lpa <= 0) return null;
+        return Math.sqrt(22.5 * vpa * lpa);
     }
 
     async function renderStocks() {
         const container = document.getElementById('dashboard-content');
         container.innerHTML = "";
-        let hasOpportunity = false;
+        let totalVariation = 0;
+        let count = 0;
 
         for (const [name, list] of Object.entries(sectors)) {
             const id = name.replace(/\s/g, '');
-            const count = Object.keys(list).length;
             const sectorDiv = document.createElement('div');
             sectorDiv.className = 'sector-section';
             sectorDiv.id = `sec-${id}`;
-            sectorDiv.innerHTML = `
-                <div class="sector-header" onclick="toggleSector('${id}')">
-                    <span class="sector-title">${name} (${count})</span>
-                    <span>▼</span>
-                </div>
-                <div class="grid" id="grid-${id}"></div>`;
+            sectorDiv.innerHTML = `<div class="sector-header" onclick="toggleSector('${id}')"><span class="sector-title">${name} (${Object.keys(list).length})</span><span>▼</span></div><div class="grid" id="grid-${id}"></div>`;
             container.appendChild(sectorDiv);
             
             const grid = document.getElementById(`grid-${id}`);
             for (const ticker in list) {
                 try {
-                    const res = await fetch(`https://brapi.dev/api/quote/${ticker}?token=${API_TOKEN}`);
+                    const res = await fetch(`https://brapi.dev/api/quote/${ticker}?token=${API_TOKEN}&fundamental=true`);
                     const data = await res.json();
                     const asset = data.results[0];
                     const teto = config[ticker] || 0;
-                    const isOpp = teto > 0 && asset.regularMarketPrice <= teto;
+                    const preco = asset.regularMarketPrice;
+                    const isOpp = teto > 0 && preco <= teto;
                     const isUp = asset.regularMarketChangePercent >= 0;
                     
-                    if(isOpp) hasOpportunity = true;
+                    // Diferença para o teto
+                    const diffTeto = teto > 0 ? ((preco - teto) / teto * 100).toFixed(1) : null;
+                    
+                    // Graham (Simulado via dados de fundamental se disponível)
+                    const graham = calcGraham(asset.bookValue, asset.earningsPerShare);
+
+                    totalVariation += asset.regularMarketChangePercent;
+                    count++;
 
                     grid.innerHTML += `
                         <div class="card ${isOpp ? 'opportunity' : ''}">
-                            ${isOpp ? '<span class="buy-label">COMPRA!</span>' : ''}
+                            ${isOpp ? `<span class="buy-label">COMPRA! <span class="margin-tag">${diffTeto}%</span></span>` : ''}
                             <a href="https://www.google.com/finance/quote/${ticker}:BVMF" target="_blank" class="ticker-link">${ticker}</a>
                             <span class="asset-name">${list[ticker]}</span>
-                            <span class="price">R$ ${asset.regularMarketPrice.toFixed(2)}</span>
+                            <span class="price">R$ ${preco.toFixed(2)}</span>
                             <div class="variation-row ${isUp ? 'up' : 'down'}">
                                 <span>${isUp ? '▲' : '▼'}${asset.regularMarketChangePercent.toFixed(1)}%</span>
                                 <span style="opacity:0.3">|</span>
                                 <span>R$${Math.abs(asset.regularMarketChange).toFixed(2)}</span>
                             </div>
                             <div class="info-footer">
-                                <span class="info-label">TETO:</span> <span class="info-value">R$ ${teto > 0 ? teto.toFixed(2) : '--'}</span>
+                                <div class="info-line">
+                                    <span class="info-label">TETO (BARSI):</span>
+                                    <span class="info-value">R$ ${teto > 0 ? teto.toFixed(2) : '--'}</span>
+                                </div>
+                                <div class="info-line">
+                                    <span class="info-label">GRAHAM:</span>
+                                    <span class="info-value graham-value">${graham ? 'R$ ' + graham.toFixed(2) : '--'}</span>
+                                </div>
                             </div>
                         </div>`;
                 } catch (e) {}
             }
         }
-        if(hasOpportunity && !opportunityAlerted) { playAlert(); opportunityAlerted = true; }
+        updateSentiment(totalVariation / count);
+    }
+
+    function updateSentiment(avg) {
+        const bar = document.getElementById('sentimentBar');
+        const text = document.getElementById('sentimentText');
+        // Normaliza a variação média do painel (de -3% a +3%) para a barra de 0 a 100
+        let score = 50 + (avg * 15); 
+        score = Math.max(5, Math.min(95, score));
+        
+        bar.style.width = `${score}%`;
+        if (score < 40) text.innerText = "SENTIMENTO: MEDO (OPORTUNIDADE)";
+        else if (score > 60) text.innerText = "SENTIMENTO: GANÂNCIA (CUIDADO)";
+        else text.innerText = "SENTIMENTO: NEUTRO";
     }
 
     function toggleSector(id) { document.getElementById(`sec-${id}`).classList.toggle('expanded'); }
@@ -215,11 +239,7 @@
     
     function updateClock() {
         const now = new Date();
-        const day = now.getDay();
-        const hour = now.getHours();
-        const isOpen = (day >= 1 && day <= 5) && (hour >= 10 && hour < 18);
-        
-        document.getElementById('dot').className = `status-dot`;
+        const isOpen = (now.getDay() >= 1 && now.getDay() <= 5) && (now.getHours() >= 10 && now.getHours() < 18);
         document.getElementById('dot').style.background = isOpen ? '#00f2a1' : '#ff4d6d';
         document.getElementById('statusText').innerText = `B3 ${isOpen ? 'ABERTO' : 'FECHADO'} | ${now.toLocaleTimeString('pt-BR')}`;
     }
