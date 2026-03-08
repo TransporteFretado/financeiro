@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GTB TERMINAL</title>
+    <title>Painel de Ações e Cripto</title>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Cinza Escuro mais visível e profissional */
             --bg: #0b0e11; --card-bg: #161a1e; --text-main: #e3e6e8;
-            --text-muted: #a0a7b1; /* Cinza ajustado para melhor leitura */
-            --border: #2b3139; --success: #00f2a1; --danger: #ff4d6d; --warning: #ffb800;
+            --text-muted: #a0a7b1; --border: #2b3139; --success: #00f2a1; --danger: #ff4d6d; --warning: #ffb800;
             --accent: #3b82f6;
         }
 
@@ -22,7 +20,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text-main); padding-bottom: 90px; transition: background 0.3s; }
         
-        /* Ticker Superior: Ajustado para Mobile */
         .ticker-header-group { 
             position: sticky; top: 0; z-index: 1000; 
             background: var(--bg); width: 100%; height: 50px;
@@ -45,8 +42,7 @@
         .grid { display: none; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; padding: 8px; background: var(--bg); }
         .expanded .grid { display: grid; }
 
-        /* Cards com fontes reduzidas */
-        .card { background: var(--card-bg); padding: 12px 8px; border-radius: 8px; border: 1px solid var(--border); text-align: center; display: flex; flex-direction: column; align-items: center; min-height: 130px; }
+        .card { background: var(--card-bg); padding: 12px 8px; border-radius: 8px; border: 1px solid var(--border); text-align: center; display: flex; flex-direction: column; align-items: center; min-height: 140px; }
         
         .card.opportunity { animation: pulse-border 2s infinite; }
         @keyframes pulse-border {
@@ -61,7 +57,7 @@
         .asset-name { font-size: 0.5rem; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; }
         .price { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; }
         
-        .variation-row { font-size: 0.65rem; font-weight: 700; display: flex; gap: 4px; align-items: center; margin-bottom: 8px; }
+        .variation-row { font-size: 0.65rem; font-weight: 700; display: flex; gap: 5px; align-items: center; margin-bottom: 8px; }
         .up { color: var(--success); } .down { color: var(--danger); }
 
         .info-footer { margin-top: auto; padding-top: 6px; border-top: 1px solid var(--border); width: 100%; }
@@ -74,7 +70,6 @@
 
         @media (max-width: 600px) { 
             .grid { grid-template-columns: 1fr 1fr !important; } 
-            .header h1 { font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -100,8 +95,8 @@
 
 <div class="container">
     <div class="header">
-        <h1>GTB TERMINAL</h1>
-        <p>"Monitoramento em Tempo Real"</p>
+        <h1>Painel de Ações e Cripto</h1>
+        <p>"Siga o fluxo inteligente do capital..."</p>
     </div>
     <div class="btn-container">
         <button class="btn" onclick="toggleAll(true)">EXPANDIR TUDO</button>
@@ -112,9 +107,9 @@
 
 <div class="market-footer">
     <div style="display: flex; gap: 10px; margin-bottom: 5px;">
-        <a href="#" class="news-link">G1 ECONOMIA</a>
-        <a href="#" class="news-link">INVESTING</a>
-        <a href="#" class="news-link">INFOMONEY</a>
+        <a href="https://g1.globo.com/economia/" target="_blank" class="news-link">► G1 ECONOMIA</a>
+        <a href="https://br.investing.com/" target="_blank" class="news-link">► INVESTING</a>
+        <a href="https://www.infomoney.com.br/" target="_blank" class="news-link">► INFOMONEY</a>
     </div>
     <div style="display: flex; gap: 6px; align-items: center;">
         <div id="dot" class="status-dot"></div>
@@ -124,15 +119,32 @@
 
 <script>
     const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
-    const config = { "BBAS3": 35.00, "ITUB4": 45.00, "PETR4": 40.00, "VALE3": 80.00, "MXRF11": 10.50 };
+    
+    // Preços teto para alerta de oportunidade
+    const config = { 
+        "BBAS3": 28.00, "ITUB4": 32.00, "PETR4": 36.00, "VALE3": 62.00, 
+        "MXRF11": 10.10, "BBDC4": 14.50, "SBSP3": 75.00 
+    };
+
     const sectors = {
-        "Criptomoedas": { "BTCBRL": "Bitcoin", "ETHBRL": "Ethereum", "SOLBRL": "Solana" },
-        "Bancos & Seguros": { "BBAS3": "Banco do Brasil", "ITUB4": "Itaú", "CXSE3": "Caixa Seg" },
-        "FIIs": { "MXRF11": "Maxi Renda", "HGLG11": "CSHG Log" },
-        "Papel & Indústria": { "KLBN11": "Klabin", "WEGE3": "WEG S.A" }
+        "Bancos & Seguros": { "BBAS3": "Banco do Brasil", "ITUB4": "Itaú Unibanco", "BBDC4": "Bradesco", "BBSE3": "BB Seguridade", "CXSE3": "Caixa Seg" },
+        "Energia & Saneamento": { "PETR4": "Petrobras", "ELET3": "Eletrobras", "CPLE6": "Copel", "SBSP3": "Sabesp", "VBBR3": "Vibra Energia" },
+        "Commodities & Indústria": { "VALE3": "Vale S.A.", "KLBN11": "Klabin", "WEGE3": "WEG S.A.", "CSNA3": "Siderúrgica Nac" },
+        "FIIs & Imobiliário": { "MXRF11": "Maxi Renda", "HGLG11": "CSHG Log", "XPLG11": "XP Log", "KNIP11": "Kinea Índices", "HGRU11": "CSHG Renda" },
+        "Varejo & Consumo": { "MGLU3": "Magalu", "ABEV3": "Ambev", "RENT3": "Localiza" }
     };
 
     let opportunityAlerted = false;
+
+    function applyTheme() {
+        const hour = new Date().getHours();
+        // Tema claro das 06:00 às 17:59
+        if (hour >= 6 && hour < 18) {
+            document.getElementById('mainBody').setAttribute('data-theme', 'light');
+        } else {
+            document.getElementById('mainBody').removeAttribute('data-theme');
+        }
+    }
 
     function playAlert() {
         try {
@@ -153,10 +165,16 @@
 
         for (const [name, list] of Object.entries(sectors)) {
             const id = name.replace(/\s/g, '');
+            const count = Object.keys(list).length;
             const sectorDiv = document.createElement('div');
             sectorDiv.className = 'sector-section';
             sectorDiv.id = `sec-${id}`;
-            sectorDiv.innerHTML = `<div class="sector-header" onclick="toggleSector('${id}')"><span class="sector-title">${name}</span><span>▼</span></div><div class="grid" id="grid-${id}"></div>`;
+            sectorDiv.innerHTML = `
+                <div class="sector-header" onclick="toggleSector('${id}')">
+                    <span class="sector-title">${name} (${count})</span>
+                    <span>▼</span>
+                </div>
+                <div class="grid" id="grid-${id}"></div>`;
             container.appendChild(sectorDiv);
             
             const grid = document.getElementById(`grid-${id}`);
@@ -168,19 +186,22 @@
                     const teto = config[ticker] || 0;
                     const isOpp = teto > 0 && asset.regularMarketPrice <= teto;
                     const isUp = asset.regularMarketChangePercent >= 0;
+                    
                     if(isOpp) hasOpportunity = true;
 
                     grid.innerHTML += `
                         <div class="card ${isOpp ? 'opportunity' : ''}">
                             ${isOpp ? '<span class="buy-label">COMPRA!</span>' : ''}
-                            <a href="#" class="ticker-link">${ticker}</a>
+                            <a href="https://www.google.com/finance/quote/${ticker}:BVMF" target="_blank" class="ticker-link">${ticker}</a>
                             <span class="asset-name">${list[ticker]}</span>
                             <span class="price">R$ ${asset.regularMarketPrice.toFixed(2)}</span>
                             <div class="variation-row ${isUp ? 'up' : 'down'}">
                                 <span>${isUp ? '▲' : '▼'}${asset.regularMarketChangePercent.toFixed(1)}%</span>
+                                <span style="opacity:0.3">|</span>
+                                <span>R$${Math.abs(asset.regularMarketChange).toFixed(2)}</span>
                             </div>
                             <div class="info-footer">
-                                <span class="info-label">TETO:</span> <span class="info-value">R$ ${teto.toFixed(2)}</span>
+                                <span class="info-label">TETO:</span> <span class="info-value">R$ ${teto > 0 ? teto.toFixed(2) : '--'}</span>
                             </div>
                         </div>`;
                 } catch (e) {}
@@ -194,12 +215,16 @@
     
     function updateClock() {
         const now = new Date();
-        const isOpen = (now.getDay() >= 1 && now.getDay() <= 5) && (now.getHours() >= 10 && now.getHours() < 18);
-        document.getElementById('dot').className = `status-dot ${isOpen ? 'dot-open' : 'dot-closed'}`;
+        const day = now.getDay();
+        const hour = now.getHours();
+        const isOpen = (day >= 1 && day <= 5) && (hour >= 10 && hour < 18);
+        
+        document.getElementById('dot').className = `status-dot`;
         document.getElementById('dot').style.background = isOpen ? '#00f2a1' : '#ff4d6d';
         document.getElementById('statusText').innerText = `B3 ${isOpen ? 'ABERTO' : 'FECHADO'} | ${now.toLocaleTimeString('pt-BR')}`;
     }
 
+    applyTheme();
     renderStocks();
     setInterval(updateClock, 1000);
 </script>
