@@ -20,22 +20,25 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text-main); padding-bottom: 90px; transition: background 0.3s; }
         
-        /* Container do Ticker - Forçando altura e visibilidade */
+        /* CORREÇÃO MOBILE: Container com overflow visível e altura fixa */
         .ticker-header-group { 
             position: sticky; 
             top: 0; 
             z-index: 1000; 
             background: var(--bg); 
             width: 100%;
-            height: 46px;
+            height: 48px;
             border-bottom: 1px solid var(--border);
+            overflow: hidden; /* Garante que o widget não quebre o layout */
         }
         
-        .tradingview-widget-container { width: 100%; height: 46px !important; }
-        
+        .tradingview-widget-container { 
+            width: 100% !important; 
+            height: 48px !important; 
+        }
+
         .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 10px; }
         
-        /* Título com a cor do Token (Azul Accent) */
         .header { text-align: center; margin: 20px 0; }
         .header h1 { font-size: 1.4rem; font-weight: 900; color: var(--accent); letter-spacing: -1px; text-transform: uppercase; }
         .header p { font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: 3px; font-style: italic; }
@@ -80,7 +83,7 @@
 
         @media (max-width: 600px) { 
             .grid { grid-template-columns: 1fr 1fr !important; } 
-            .ticker-header-group { position: sticky; height: 46px; }
+            .ticker-header-group { position: sticky; height: 48px; }
         }
     </style>
 </head>
@@ -101,7 +104,7 @@
         "showSymbolLogo": true, 
         "colorTheme": "dark", 
         "isTransparent": true, 
-        "displayMode": "regular", 
+        "displayMode": "adaptive", 
         "locale": "br"
         }
         </script>
@@ -152,7 +155,7 @@
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
             osc.start();
             osc.stop(audioCtx.currentTime + 0.1);
         } catch(e) {}
