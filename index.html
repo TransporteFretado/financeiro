@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Painel de Ações e Cripto</title>
+    <title>Painel GTB Terminal</title>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -20,12 +20,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text-main); padding-bottom: 110px; transition: background 0.3s; }
         
-        .ticker-header-group { 
-            position: sticky; top: 0; z-index: 1000; 
-            background: var(--bg); width: 100%; height: 50px;
-            border-bottom: 1px solid var(--border);
-        }
-        
+        .ticker-header-group { position: sticky; top: 0; z-index: 1000; background: var(--bg); width: 100%; height: 50px; border-bottom: 1px solid var(--border); }
         .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 10px; }
         
         .header { text-align: center; margin: 15px 0; }
@@ -39,138 +34,99 @@
         .sector-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .sector-title { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
 
-        .grid { display: none; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; padding: 8px; background: var(--bg); }
+        .grid { display: none; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; padding: 8px; background: var(--bg); }
         .expanded .grid { display: grid; }
 
-        .card { background: var(--card-bg); padding: 12px 8px; border-radius: 8px; border: 1px solid var(--border); text-align: center; display: flex; flex-direction: column; align-items: center; min-height: 160px; position: relative; }
-        
+        /* Estilo do Card Compacto por Padrão */
+        .card { background: var(--card-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border); text-align: center; display: flex; flex-direction: column; align-items: center; transition: all 0.3s ease; position: relative; }
         .card.opportunity { animation: pulse-border 2s infinite; }
-        @keyframes pulse-border {
-            0%, 100% { border-color: var(--success); }
-            50% { border-color: var(--warning); }
-        }
+        @keyframes pulse-border { 0%, 100% { border-color: var(--success); } 50% { border-color: var(--warning); } }
 
         .buy-label { font-size: 0.45rem; font-weight: 800; color: var(--success); margin-bottom: 4px; animation: blink 1s infinite; }
-        .margin-tag { font-size: 0.45rem; color: var(--success); font-weight: 800; margin-left: 4px; }
         @keyframes blink { 50% { opacity: 0.2; } }
         
-        .ticker-link { font-size: 0.85rem; font-weight: 800; color: var(--accent); text-decoration: none; margin-bottom: 1px; }
-        .asset-name { font-size: 0.5rem; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; }
-        .price { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; }
+        .ticker-link { font-size: 0.9rem; font-weight: 800; color: var(--accent); text-decoration: none; }
+        .asset-name { font-size: 0.5rem; color: var(--text-muted); font-weight: 600; margin-bottom: 5px; text-transform: uppercase; }
+        .price { font-size: 1.1rem; font-weight: 800; }
         
-        .variation-row { font-size: 0.65rem; font-weight: 700; display: flex; gap: 5px; align-items: center; margin-bottom: 8px; }
-        .up { color: var(--success); } .down { color: var(--danger); }
+        /* Elementos que iniciam escondidos (Modo Compacto) */
+        .extra-info { display: none; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+        .card.show-details .extra-info { display: block; }
 
-        .info-footer { margin-top: auto; padding-top: 6px; border-top: 1px solid var(--border); width: 100%; display: flex; flex-direction: column; gap: 2px; }
-        .info-line { display: flex; justify-content: space-between; width: 100%; }
+        .btn-details { background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 0.5rem; padding: 2px 8px; border-radius: 4px; margin-top: 8px; cursor: pointer; font-weight: 700; }
+        .btn-details:hover { color: var(--accent); border-color: var(--accent); }
+
+        .yield-chart-mini { width: 100%; height: 20px; margin: 8px 0; display: flex; align-items: flex-end; gap: 2px; justify-content: center; }
+        .bar { width: 4px; background: var(--accent); border-radius: 1px; opacity: 0.6; }
+
+        .datacom-badge { position: absolute; top: 5px; right: 5px; font-size: 0.7rem; }
+
+        .info-line { display: flex; justify-content: space-between; width: 100%; margin-bottom: 2px; }
         .info-label { font-size: 0.45rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
         .info-value { font-size: 0.65rem; font-weight: 800; color: var(--warning); }
-        .graham-value { color: var(--accent); }
 
-        /* Barra de Medo e Ganância */
         .market-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 95px; background: var(--card-bg); border-top: 2px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
-        .news-link { color: var(--text-muted); text-decoration: none; font-size: 0.55rem; font-weight: 700; }
-        .sentiment-container { width: 80%; max-width: 300px; height: 12px; background: #333; border-radius: 10px; margin: 8px 0; position: relative; overflow: hidden; }
-        .sentiment-bar { height: 100%; width: 50%; background: linear-gradient(90deg, var(--danger), var(--warning), var(--success)); transition: width 1s ease-in-out; }
-        .sentiment-label { font-size: 0.5rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+        .sentiment-container { width: 80%; max-width: 300px; height: 10px; background: #333; border-radius: 10px; margin: 5px 0; overflow: hidden; }
+        .sentiment-bar { height: 100%; width: 50%; background: linear-gradient(90deg, var(--danger), var(--warning), var(--success)); transition: width 1s; }
 
-        @media (max-width: 600px) { 
-            .grid { grid-template-columns: 1fr 1fr !important; } 
-        }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr 1fr !important; } }
     </style>
 </head>
 <body id="mainBody">
 
 <div class="ticker-header-group">
-    <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-        {
-        "symbols": [
-            {"proName": "BMFBOVESPA:IBOV", "title": "IBOV"},
-            {"proName": "FX_IDC:USDBRL", "title": "USD/BRL"},
-            {"proName": "BINANCE:BTCBRL", "title": "BTC"},
-            {"proName": "BINANCE:ETHBRL", "title": "ETH"},
-            {"proName": "BINANCE:SOLBRL", "title": "SOL"}
-        ],
-        "showSymbolLogo": true, "colorTheme": "dark", "isTransparent": true, "displayMode": "adaptive", "locale": "br"
-        }
-        </script>
-    </div>
+    <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    {"symbols": [{"proName": "BMFBOVESPA:IBOV", "title": "IBOV"},{"proName": "FX_IDC:USDBRL", "title": "USD/BRL"},{"proName": "BINANCE:BTCBRL", "title": "BTC"}],"showSymbolLogo": true, "colorTheme": "dark", "isTransparent": true, "displayMode": "adaptive", "locale": "br"}
+    </script></div>
 </div>
 
 <div class="container">
     <div class="header">
-        <h1>Painel de Ações e Cripto</h1>
-        <p>"Siga o fluxo inteligente do capital..."</p>
+        <h1>GTB Terminal</h1>
+        <p>"A inteligência por trás do dividendo"</p>
     </div>
     <div class="btn-container">
-        <button class="btn" onclick="toggleAll(true)">EXPANDIR TUDO</button>
-        <button class="btn" onclick="toggleAll(false)">RECOLHER TUDO</button>
+        <button class="btn" onclick="toggleAll(true)">EXPANDIR SETORES</button>
+        <button class="btn" onclick="toggleAll(false)">RECOLHER SETORES</button>
     </div>
     <div id="dashboard-content"></div>
 </div>
 
 <div class="market-footer">
-    <div style="display: flex; gap: 10px; margin-bottom: 2px;">
-        <a href="https://g1.globo.com/economia/" target="_blank" class="news-link">► G1 ECONOMIA</a>
-        <a href="https://br.investing.com/" target="_blank" class="news-link">► INVESTING</a>
-        <a href="https://www.infomoney.com.br/" target="_blank" class="news-link">► INFOMONEY</a>
+    <div style="display: flex; gap: 10px; font-size: 0.55rem; font-weight: 700;">
+        <a href="#" class="news-link" style="color:var(--text-muted); text-decoration:none;">► G1 ECONOMIA</a>
+        <a href="#" class="news-link" style="color:var(--text-muted); text-decoration:none;">► INVESTING</a>
     </div>
-    
-    <div class="sentiment-label" id="sentimentText">SENTIMENTO: NEUTRO</div>
-    <div class="sentiment-container">
-        <div id="sentimentBar" class="sentiment-bar"></div>
-    </div>
-
+    <div id="sentimentText" style="font-size: 0.5rem; font-weight: 800; margin-top: 5px;">SENTIMENTO: NEUTRO</div>
+    <div class="sentiment-container"><div id="sentimentBar" class="sentiment-bar"></div></div>
     <div style="display: flex; gap: 6px; align-items: center;">
-        <div id="dot" class="status-dot" style="width: 8px; height: 8px; border-radius: 50%;"></div>
+        <div id="dot" style="width: 8px; height: 8px; border-radius: 50%;"></div>
         <span id="statusText" style="font-size: 0.6rem; font-weight: 800;">CARREGANDO...</span>
     </div>
 </div>
 
 <script>
     const API_TOKEN = 'nctccHqqPkRvTdxGsZeK2f';
-    
-    const config = { 
-        "BBAS3": 28.00, "ITUB4": 32.00, "PETR4": 36.00, "VALE3": 62.00, 
-        "MXRF11": 10.10, "BBDC4": 14.50, "SBSP3": 75.00 
-    };
-
+    const config = { "BBAS3": 28.00, "ITUB4": 32.00, "PETR4": 36.00, "VALE3": 62.00, "BBDC4": 14.50, "SBSP3": 75.00, "VIVT3": 52.00, "TIMS3": 18.00 };
     const sectors = {
-        "Bancos & Seguros": { "BBAS3": "Banco do Brasil", "ITUB4": "Itaú Unibanco", "BBDC4": "Bradesco", "BBSE3": "BB Seguridade", "CXSE3": "Caixa Seg" },
-        "Energia & Saneamento": { "PETR4": "Petrobras", "ELET3": "Eletrobras", "CPLE6": "Copel", "SBSP3": "Sabesp", "VBBR3": "Vibra Energia" },
-        "Commodities & Indústria": { "VALE3": "Vale S.A.", "KLBN11": "Klabin", "WEGE3": "WEG S.A.", "CSNA3": "Siderúrgica Nac" },
-        "FIIs & Imobiliário": { "MXRF11": "Maxi Renda", "HGLG11": "CSHG Log", "XPLG11": "XP Log", "KNIP11": "Kinea Índices", "HGRU11": "CSHG Renda" },
-        "Varejo & Consumo": { "MGLU3": "Magalu", "ABEV3": "Ambev", "RENT3": "Localiza" }
+        "Bancos & Seguros": { "BBAS3": "Banco do Brasil", "ITUB4": "Itaú Unibanco", "BBDC4": "Bradesco", "BBSE3": "BB Seguridade" },
+        "Telecom & Energia": { "VIVT3": "Vivo", "TIMS3": "TIM Brasil", "PETR4": "Petrobras", "ELET3": "Eletrobras" },
+        "Saneamento & Outros": { "SBSP3": "Sabesp", "VALE3": "Vale S.A.", "MXRF11": "Maxi Renda" }
     };
 
-    let opportunityAlerted = false;
-
-    function applyTheme() {
-        const hour = new Date().getHours();
-        if (hour >= 6 && hour < 18) { document.getElementById('mainBody').setAttribute('data-theme', 'light'); }
-        else { document.getElementById('mainBody').removeAttribute('data-theme'); }
-    }
-
-    // Cálculo simplificado de Graham: Raiz(22.5 * VPA * LPA)
-    function calcGraham(vpa, lpa) {
-        if (!vpa || !lpa || vpa <= 0 || lpa <= 0) return null;
-        return Math.sqrt(22.5 * vpa * lpa);
-    }
+    function calcGraham(vpa, lpa) { return (vpa > 0 && lpa > 0) ? Math.sqrt(22.5 * vpa * lpa) : null; }
 
     async function renderStocks() {
         const container = document.getElementById('dashboard-content');
         container.innerHTML = "";
-        let totalVariation = 0;
-        let count = 0;
+        let totalVar = 0, count = 0;
 
         for (const [name, list] of Object.entries(sectors)) {
             const id = name.replace(/\s/g, '');
             const sectorDiv = document.createElement('div');
             sectorDiv.className = 'sector-section';
-            sectorDiv.id = `sec-${id}`;
-            sectorDiv.innerHTML = `<div class="sector-header" onclick="toggleSector('${id}')"><span class="sector-title">${name} (${Object.keys(list).length})</span><span>▼</span></div><div class="grid" id="grid-${id}"></div>`;
+            sectorDiv.innerHTML = `<div class="sector-header" onclick="toggleSector('${id}')"><span class="sector-title">${name}</span><span>▼</span></div><div class="grid" id="grid-${id}"></div>`;
             container.appendChild(sectorDiv);
             
             const grid = document.getElementById(`grid-${id}`);
@@ -180,63 +136,52 @@
                     const data = await res.json();
                     const asset = data.results[0];
                     const teto = config[ticker] || 0;
-                    const preco = asset.regularMarketPrice;
-                    const isOpp = teto > 0 && preco <= teto;
-                    const isUp = asset.regularMarketChangePercent >= 0;
-                    
-                    // Diferença para o teto
-                    const diffTeto = teto > 0 ? ((preco - teto) / teto * 100).toFixed(1) : null;
-                    
-                    // Graham (Simulado via dados de fundamental se disponível)
+                    const isOpp = teto > 0 && asset.regularMarketPrice <= teto;
                     const graham = calcGraham(asset.bookValue, asset.earningsPerShare);
-
-                    totalVariation += asset.regularMarketChangePercent;
-                    count++;
+                    
+                    totalVar += asset.regularMarketChangePercent; count++;
 
                     grid.innerHTML += `
-                        <div class="card ${isOpp ? 'opportunity' : ''}">
-                            ${isOpp ? `<span class="buy-label">COMPRA! <span class="margin-tag">${diffTeto}%</span></span>` : ''}
-                            <a href="https://www.google.com/finance/quote/${ticker}:BVMF" target="_blank" class="ticker-link">${ticker}</a>
+                        <div class="card ${isOpp ? 'opportunity' : ''}" id="card-${ticker}">
+                            ${isOpp ? `<span class="buy-label">COMPRA! ${((asset.regularMarketPrice-teto)/teto*100).toFixed(1)}%</span>` : ''}
+                            ${asset.dividendYield > 8 ? '<span class="datacom-badge">💰</span>' : ''}
+                            <a href="#" class="ticker-link">${ticker}</a>
                             <span class="asset-name">${list[ticker]}</span>
-                            <span class="price">R$ ${preco.toFixed(2)}</span>
-                            <div class="variation-row ${isUp ? 'up' : 'down'}">
-                                <span>${isUp ? '▲' : '▼'}${asset.regularMarketChangePercent.toFixed(1)}%</span>
-                                <span style="opacity:0.3">|</span>
-                                <span>R$${Math.abs(asset.regularMarketChange).toFixed(2)}</span>
-                            </div>
-                            <div class="info-footer">
-                                <div class="info-line">
-                                    <span class="info-label">TETO (BARSI):</span>
-                                    <span class="info-value">R$ ${teto > 0 ? teto.toFixed(2) : '--'}</span>
+                            <span class="price">R$ ${asset.regularMarketPrice.toFixed(2)}</span>
+                            <span style="font-size:0.6rem; font-weight:bold; color:${asset.regularMarketChange >=0 ? 'var(--success)':'var(--danger)'}">
+                                ${asset.regularMarketChangePercent.toFixed(1)}%
+                            </span>
+                            
+                            <button class="btn-details" onclick="toggleDetails('${ticker}')">DETALHES</button>
+                            
+                            <div class="extra-info">
+                                <div class="yield-chart-mini">
+                                    <div class="bar" style="height:40%"></div>
+                                    <div class="bar" style="height:60%"></div>
+                                    <div class="bar" style="height:35%"></div>
+                                    <div class="bar" style="height:80%; opacity:1"></div>
                                 </div>
-                                <div class="info-line">
-                                    <span class="info-label">GRAHAM:</span>
-                                    <span class="info-value graham-value">${graham ? 'R$ ' + graham.toFixed(2) : '--'}</span>
-                                </div>
+                                <div class="info-line"><span class="info-label">TETO:</span><span class="info-value">R$ ${teto?teto.toFixed(2):'--'}</span></div>
+                                <div class="info-line"><span class="info-label">GRAHAM:</span><span class="info-value" style="color:var(--accent)">R$ ${graham?graham.toFixed(2):'--'}</span></div>
+                                <div class="info-line"><span class="info-label">YIELD:</span><span class="info-value" style="color:var(--success)">${asset.dividendYield?asset.dividendYield.toFixed(2):'0.0'}%</span></div>
                             </div>
                         </div>`;
                 } catch (e) {}
             }
         }
-        updateSentiment(totalVariation / count);
+        updateSentiment(totalVar / count);
     }
 
-    function updateSentiment(avg) {
-        const bar = document.getElementById('sentimentBar');
-        const text = document.getElementById('sentimentText');
-        // Normaliza a variação média do painel (de -3% a +3%) para a barra de 0 a 100
-        let score = 50 + (avg * 15); 
-        score = Math.max(5, Math.min(95, score));
-        
-        bar.style.width = `${score}%`;
-        if (score < 40) text.innerText = "SENTIMENTO: MEDO (OPORTUNIDADE)";
-        else if (score > 60) text.innerText = "SENTIMENTO: GANÂNCIA (CUIDADO)";
-        else text.innerText = "SENTIMENTO: NEUTRO";
-    }
-
-    function toggleSector(id) { document.getElementById(`sec-${id}`).classList.toggle('expanded'); }
-    function toggleAll(expand) { document.querySelectorAll('.sector-section').forEach(s => expand ? s.classList.add('expanded') : s.classList.remove('expanded')); }
+    function toggleDetails(ticker) { document.getElementById(`card-${ticker}`).classList.toggle('show-details'); }
+    function toggleSector(id) { document.getElementById(`grid-${id}`).parentElement.classList.toggle('expanded'); }
+    function toggleAll(exp) { document.querySelectorAll('.sector-section').forEach(s => exp ? s.classList.add('expanded') : s.classList.remove('expanded')); }
     
+    function updateSentiment(avg) {
+        const score = Math.max(5, Math.min(95, 50 + (avg * 15)));
+        document.getElementById('sentimentBar').style.width = `${score}%`;
+        document.getElementById('sentimentText').innerText = score < 40 ? "SENTIMENTO: MEDO (COMPRA)" : score > 60 ? "SENTIMENTO: GANÂNCIA" : "SENTIMENTO: NEUTRO";
+    }
+
     function updateClock() {
         const now = new Date();
         const isOpen = (now.getDay() >= 1 && now.getDay() <= 5) && (now.getHours() >= 10 && now.getHours() < 18);
@@ -244,7 +189,6 @@
         document.getElementById('statusText').innerText = `B3 ${isOpen ? 'ABERTO' : 'FECHADO'} | ${now.toLocaleTimeString('pt-BR')}`;
     }
 
-    applyTheme();
     renderStocks();
     setInterval(updateClock, 1000);
 </script>
